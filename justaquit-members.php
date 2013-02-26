@@ -14,6 +14,8 @@ require( JMEMBERS_PATH . 'core/classes/Membership.php' );
 require( JMEMBERS_PATH . 'core/classes/Package.php' );
 require( JMEMBERS_PATH . 'core/pages/main.php' );
 require( JMEMBERS_PATH . 'core/pages/memberships.php' );
+require( JMEMBERS_PATH . 'core/pages/packages.php' );
+require( JMEMBERS_PATH . 'core/pages/settings.php' );
 require( JMEMBERS_PATH . 'core/functions/get.php' );
 
 Class JA_Members {
@@ -48,7 +50,7 @@ Class JA_Members {
 				duration_type mediumint(9) DEFAULT 0 NOT NULL,
 				price decimal(5,2) DEFAULT 0 NOT NULL,
 				billing mediumint(9) DEFAULT 0 NOT NULL,
-				description mediumint(9) NULL,
+				description longtext NULL,
 				expired_package mediumint(9) DEFAULT 0 NOT NULL,
 				display longtext NULL,
 				menu_order mediumint(9) DEFAULT 0 NOT NULL,
