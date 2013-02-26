@@ -13,15 +13,15 @@ Class JMembers_Package {
 	private $payment; // Array
 
 	public function __construct( $membership_id, $duration = 0, $duration_type = 0, $price = 0, $billing = 0, $description = NULL, $expired_package = 0, $display = NULL, $menu_order = 0, $payment = NULL ){
-		$this->membership_id   = $membership_id;
-		$this->duration        = $duration;
-		$this->duration_type   = $duration_type;
-		$this->price           = $price;
-		$this->billing         = $billing;
-		$this->description     = $description;
-		$this->expired_package = $expired_package;
+		$this->membership_id   = (int)$membership_id;
+		$this->duration        = (int)$duration;
+		$this->duration_type   = (int)$duration_type;
+		$this->price           = (float)$price;
+		$this->billing         = (int)$billing;
+		$this->description     = (String)$description;
+		$this->expired_package = (int)$expired_package;
 		$this->display         = serialize($display);
-		$this->menu_order      = $menu_order;
+		$this->menu_order      = (int)$menu_order;
 		$this->payment         = serialize($payment);
 	}
 
@@ -30,6 +30,10 @@ Class JMembers_Package {
 		$table = $wpdb->prefix.'jm_packages';
 
 		$data   = get_object_vars($this);
+		unset( $data['ID'] );
+
+		echo '<script>alert("'.var_dump($data).'")</script>';
+
 		$format = array( '%d', '%d', '%d', '%f', '%d', '%s', '%d', '%s', '%d', '%s' );
 
 		if( !$wpdb->insert( $table, $data, $format ) )
@@ -45,6 +49,7 @@ Class JMembers_Package {
 		$table = $wpdb->prefix.'jm_packages';
 
 		$data   = get_object_vars($this);
+		var_dump($data);
 		$where  = array( 'ID' => $ID );
 		$format = array( '%d', '%d', '%d', '%f', '%d', '%s', '%d', '%s', '%d', '%s' );
 
