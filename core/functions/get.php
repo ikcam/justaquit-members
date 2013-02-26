@@ -55,7 +55,7 @@ function get_package_name( $ID ){
 	$package = get_package( $ID );
 	$membership = get_membership( $package->membership_id );
 
-	$ouput = $membership->name.' - ';
+	$output = $membership->name.' - ';
 	$output .= $package->price.' USD ';
 	
 	if( $package->duration_type == 0 ):
