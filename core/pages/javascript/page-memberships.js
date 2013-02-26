@@ -71,6 +71,10 @@ jQuery(document).ready(function($){
 
 		$.post(ajaxurl, data, function(response){
 			alert(response);
+			$(parent).find('#submit').prop('disabled',false);
+			$(parent).find('.waiting').hide();
 		});
+
+		return false;
 	});
 });
