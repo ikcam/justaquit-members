@@ -32,8 +32,6 @@ Class JMembers_Package {
 		$data   = get_object_vars($this);
 		unset( $data['ID'] );
 
-		echo '<script>alert("'.var_dump($data).'")</script>';
-
 		$format = array( '%d', '%d', '%d', '%f', '%d', '%s', '%d', '%s', '%d', '%s' );
 
 		if( !$wpdb->insert( $table, $data, $format ) )
