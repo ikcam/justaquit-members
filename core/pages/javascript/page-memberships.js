@@ -1,8 +1,7 @@
 jQuery(document).ready(function($){
-	$( '#accordion' ).each(function(){
-		$(this).accordion({
-			collapsible: true
-		});
+	$( 'div[id^="accordion-"]' ).accordion({
+			collapsible: true,
+			heightStyle: 'content'
 	});
 
 	$( '#membership-add' ).submit(function(){
@@ -53,26 +52,6 @@ jQuery(document).ready(function($){
 				$(parent).find('#submit').prop('disabled',false);
 				$(this).find('.waiting').hide();
 			}
-		});
-
-		return false;
-	});
-
-	$( 'form[id^="package-add-"]' ).submit(function(){
-		var parent = $(this);
-
-		$(this).find('#submit').prop('disabled',true);
-		$(this).find('.waiting').show();
-
-		var data = {
-			action: 'jmembers_package_add',
-			nonce: $(this).find('#jmember_nonce').val()
-		}
-
-		$.post(ajaxurl, data, function(response){
-			alert(response);
-			$(parent).find('#submit').prop('disabled',false);
-			$(parent).find('.waiting').hide();
 		});
 
 		return false;
