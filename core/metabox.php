@@ -32,6 +32,7 @@ Class JMembers_Metabox{
 		else:
 			$payperpost = 1;
 			$price = 4;
+			$data_array = array();
 		endif;
 ?>
 	<?php wp_nonce_field( 'save_metabox', 'jmember_nonce' ) ?>
