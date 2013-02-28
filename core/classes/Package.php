@@ -47,7 +47,8 @@ Class JMembers_Package {
 		$table = $wpdb->prefix.'jm_packages';
 
 		$data   = get_object_vars($this);
-		var_dump($data);
+		unset( $data['ID'] );
+
 		$where  = array( 'ID' => $ID );
 		$format = array( '%d', '%d', '%d', '%f', '%d', '%s', '%d', '%s', '%d', '%s' );
 

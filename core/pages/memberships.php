@@ -17,7 +17,7 @@ Class JMembers_Page_Memberships{
 	}
 
 	public function scripts(){
-		wp_register_script( 'jmembers_page_memberships', plugins_url( 'javascript/page-memberships.js' , __FILE__ ), array( 'jquery' ) );
+		wp_register_script( 'jmembers_page_memberships', JMEMBERS_URL . 'core/javascript/page-memberships.js', array( 'jquery' ) );
 		wp_enqueue_script( 'jmembers_page_memberships' );
 		wp_enqueue_script( 'jquery-ui-core' );
 		wp_enqueue_script( 'jquery-ui-accordion' );
@@ -50,13 +50,16 @@ Class JMembers_Page_Memberships{
 			<h3 id="package-<?php echo $package->ID ?>"><?php echo get_package_name( $package->ID ) ?></h3>
 			<div id="package-<?php echo $package->ID ?>">
 				<form id="package-update-<?php echo $package->ID ?>" method="post" action="">
+					<?php wp_nonce_field( 'package_update', 'jmember_nonce' )  ?>
+					<input type="hidden" name="package_id" id="package_id" value="<?php echo $package->ID ?>" />
+					<input type="hidden" name="membership_id" id="membership_id" value="<?php echo $membership->ID ?>" />
 					<table class="form-table">
 					<tbody>
 						<tr valign="top">
 							<th scope="row"><label for="duration"><?php _e( 'Duration', 'jmembers' ) ?></label></th>
 							<td>
 								<input type="text" name="duration" id="duration" value="<?php echo $package->duration ?>" />
-								<select name="duration_type">
+								<select name="duration_type" id="duration_type">
 									<option value="0" <?php if( $package->duration_type == 0 ) echo 'selected'; ?>><?php _e( 'Lifetime', 'jmembers' ) ?></option>
 									<option value="1" <?php if( $package->duration_type == 1 ) echo 'selected'; ?>><?php _e( 'Years', 'jmembers' ) ?></option>
 									<option value="2" <?php if( $package->duration_type == 2 ) echo 'selected'; ?>><?php _e( 'Months', 'jmembers' ) ?></option>
@@ -79,7 +82,7 @@ Class JMembers_Page_Memberships{
 						</tr>
 						<tr valign="top">
 							<th scope="row"><label for="description"><?php _e( 'Description', 'jmembers' ) ?>:</label></th>
-							<td><textarea name="description" id="description"><?php $package->description ?></textarea></td>
+							<td><textarea name="description" id="description"><?php echo $package->description ?></textarea></td>
 						</tr>
 						<tr valign="top">
 					<th scope="row"><label for="expired_package"><?php _e( 'Package after expiration', 'jmembers' ) ?>:</label></th>
@@ -102,7 +105,6 @@ Class JMembers_Page_Memberships{
 						<td>
 <?php
 	$display = unserialize($package->display);
-	var_dump($display);
 ?>
 							<input type="checkbox" name="display_registration" id="display_registration" <?php if( $display['display_registration'] == 1 ) echo 'checked'; ?>/>
 							<label for="display_registration"><?php _e( 'Register page', 'jmembers' ) ?></label>
@@ -124,7 +126,14 @@ Class JMembers_Page_Memberships{
 					</table>
 					<p class="form-submit">
 						<input type="submit" name="submit" id="submit" class="button-primary" value="<?php _e( 'Update Package', 'jmembers' ) ?>" />
+						<img class="waiting" src="<?php echo admin_url( ) ?>images/wpspin_light.gif" height="16" width="16" style="display:none" />
+					</p>
+				</form>
 						or
+				<form id="package-delete-<?php echo $package->ID ?>" action="" method="post">
+					<?php wp_nonce_field( 'package_delete', 'jmember_nonce' ) ?>
+					<input type="hidden" name="package_id" id="package_id" value="<?php echo $package->ID ?>" />
+					<p>
 						<input type="submit" name="submit" id="submit" class="button-secondary" value="<?php _e( 'Delete Package', 'jmembers' ) ?>" />
 						<img class="waiting" src="<?php echo admin_url( ) ?>images/wpspin_light.gif" height="16" width="16" style="display:none" />
 					</p>
