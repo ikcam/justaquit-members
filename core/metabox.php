@@ -24,16 +24,24 @@ Class JMembers_Metabox{
 
 	public function metabox( $post ){
 		$settings = get_post_meta( $post->ID, '_jmembers_settings', true );
-		var_dump($settings);
+
+		if( $settings != NULL ):
+			$payperpost = $settings['payperpost'];
+			$price = $settings['price'];
+			$data_array = $settings['available'];
+		else:
+			$payperpost = 1;
+			$price = 4;
+		endif;
 ?>
 	<?php wp_nonce_field( 'save_metabox', 'jmember_nonce' ) ?>
 
 	<h4><?php _e( 'Pay per post:' ) ?></h4>
 	<p>
-		<input type="radio" name="payperpost" id="payperpost_0" value="0" /> <label for="payperpost_0"><?php _e( 'Yes', 'jmembers' ) ?></label>
-		- <label for="price"><?php _e( 'Price:', 'jmembers' ) ?></label> <input type="text" name="price" id="price" value="" /> 
+		<input type="radio" name="payperpost" id="payperpost_0" value="0" <?php if( $payperpost == 0 ) echo 'checked'; ?> /> <label for="payperpost_0"><?php _e( 'Yes', 'jmembers' ) ?></label>
+		- <label for="price"><?php _e( 'Price:', 'jmembers' ) ?></label> <input type="text" name="price" id="price" value="<?php echo $price ?>" /> 
 		<br />
-		<input type="radio" name="payperpost" id="payperpost_1" value="1" /> <label for="payperpost_1"><?php _e( 'No', 'jmembers' ) ?></label>
+		<input type="radio" name="payperpost" id="payperpost_1" value="1" <?php if( $payperpost == 1 ) echo 'checked'; ?> /> <label for="payperpost_1"><?php _e( 'No', 'jmembers' ) ?></label>
 	</p>
 
 	<div id="jmembers-more" style="display:none">
@@ -46,9 +54,14 @@ Class JMembers_Metabox{
 			$i = 0;
 
 			foreach( $memberships as $membership ):
+				if( array_key_exists($membership->ID, $data_array) ):
+					$checked = TRUE;
+				else:
+					$checked = FALSE; 
+				endif;
 ?>
 	<p>
-		<input type="checkbox" name="membership_<?php echo $i; ?>" id="membership_<?php echo $i; ?>" value="<?php echo $membership->ID ?>" /> <label for="membership_<?php echo $i; ?>"><?php echo $membership->name ?></label>
+		<input type="checkbox" name="membership_<?php echo $i; ?>" id="membership_<?php echo $i; ?>" value="<?php echo $membership->ID ?>" <?php if( $checked ) echo 'checked'; ?> /> <label for="membership_<?php echo $i; ?>"><?php echo $membership->name ?></label>
 	</p>
 <?php
 				$i++;
@@ -61,9 +74,14 @@ Class JMembers_Metabox{
 			$i = 0;
 
 			foreach( $memberships as $membership ):
+				if( array_key_exists($membership->ID, $data_array) ):
+					$value = $data_array[$membership->ID];
+				else:
+					$value = 0; 
+				endif;
 ?>
 	<p>
-		<input type="text" name="dripping_<?php echo $i; ?>" id="dripping_<?php echo $i; ?>" value="0"> <label for="dripping_<?php echo $i; ?>"><?php echo $membership->name ?></label>
+		<input type="text" name="dripping_<?php echo $i; ?>" id="dripping_<?php echo $i; ?>" value="<?php echo $value ?>"> <label for="dripping_<?php echo $i; ?>"><?php echo $membership->name ?></label>
 	</p>
 <?php
 				$i++;
