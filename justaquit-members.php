@@ -15,10 +15,14 @@ require( JMEMBERS_PATH . 'core/classes/Membership.php' );
 require( JMEMBERS_PATH . 'core/classes/Package.php' );
 require( JMEMBERS_PATH . 'core/pages/main.php' );
 require( JMEMBERS_PATH . 'core/pages/memberships.php' );
+require( JMEMBERS_PATH . 'core/pages/members.php' );
 require( JMEMBERS_PATH . 'core/pages/packages.php' );
 require( JMEMBERS_PATH . 'core/pages/settings.php' );
 require( JMEMBERS_PATH . 'core/functions/get.php' );
+require( JMEMBERS_PATH . 'core/functions/has.php' );
+require( JMEMBERS_PATH . 'core/functions/is.php' );
 require( JMEMBERS_PATH . 'core/metabox.php' );
+require( JMEMBERS_PATH . 'core/filters.php' );
 
 Class JA_Members {
 	public function __construct(){
@@ -62,7 +66,7 @@ Class JA_Members {
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			dbDelta($sql);
 
-			$table = $wpdb->prefix.'jm_puchase_posts';
+			$table = $wpdb->prefix.'jm_purchase_posts';
 			$sql = "CREATE TABLE $table (
 				ID mediumint(9) NOT NULL AUTO_INCREMENT,
 				post_id mediumint(9) NOT NULL,
