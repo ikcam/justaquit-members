@@ -1,10 +1,24 @@
 <?php
 Class JMembers_Membership {
-	public $ID;
-	private $name;
 
-	public function __construct( $name ){
-		$this->name = (String)$name;
+	/**
+	*
+	* @var int
+	*/
+	public $ID;
+	
+	/**
+	*
+	* @var string
+	*/
+	public $name;
+
+	public function __construct( $membership = NULL ){
+		if( $membership == NULL )
+			return TRUE;
+
+		foreach( get_object_vars($membership) as $key=>$value )
+			$this->$key = $value;
 	}
 
 	public function add(){
@@ -14,13 +28,10 @@ Class JMembers_Membership {
 		if( $this->exists() )
 			return FALSE;
 
-		$data = array(
-			'name' => $this->name
-		);
+		$data = get_object_vars($this);
+		unset( $data['ID'] );
 
-		$format = array( '%s' );
-
-		if( !$wpdb->insert( $table, $data, $format ) )
+		if( !$wpdb->insert( $table, $data ) )
 			return FALSE;
 
 		$this->ID = $wpdb->insert_id;
@@ -32,18 +43,15 @@ Class JMembers_Membership {
 		global $wpdb;
 		$table = $wpdb->prefix.'jm_memberships';
 
-		if( $this->exists( $ID ) ):
-			$data = array(
-				'name' => $this->name
-			);
+		$ID = (int) $ID;
 
-			$where = array(
-				'ID' => $ID
-			);
+		if( $this->exists() ):
+			$data = get_object_vars($this);
+			unset( $data['ID'] );
 
-			$format = array( '%s' );
+			$where = array( 'ID' => $ID );
 
-			if( !$wpdb->update( $table, $data, $where, $format ) )
+			if( !$wpdb->update( $table, $data, $where ) )
 				return FALSE;
 
 			return TRUE;
@@ -56,27 +64,25 @@ Class JMembers_Membership {
 		global $wpdb;
 		$table = $wpdb->prefix.'jm_memberships';
 
-		$query = "DELETE FROM $table WHERE ID = %d;";
+		$ID = (int) $ID;
 
-		$result = $wpdb->query( $wpdb->prepare( $query, $ID ) );
+		if( get_package( $ID ) == NULL )
+			return FALSE;
 
-		if( !$result || $result == 0 )
+		$query = "DELETE FROM $table WHERE ID = %d";
+
+		if( !$wpdb->query( $wpdb->prepare( $query, $ID ) ) )
 			return FALSE;
 
 		return TRUE;
 	}
 
-	private function exists($ID = NULL){
+	private function exists(){
 		global $wpdb;
 		$table = $wpdb->prefix.'jm_memberships';
 
-		if( $ID == NULL ):
-			$query = "SELECT COUNT(*) FROM $table WHERE name = %s";
-			$count = $wpdb->get_var( $wpdb->prepare( $query, $this->name ) );
-		else:
-			$query = "SELECT COUNT(*) FROM $table WHERE ID = %d";
-			$count = $wpdb->get_var( $wpdb->prepare( $query, $ID ) );
-		endif;
+		$query = "SELECT COUNT(*) FROM $table WHERE name = %s";
+		$count = $wpdb->get_var( $wpdb->prepare( $query, $this->name ) );
 
 		if( $count > 0 )
 			return TRUE;

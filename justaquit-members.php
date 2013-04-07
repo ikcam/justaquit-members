@@ -13,16 +13,27 @@ define( 'JMEMBERS_PATH' , plugin_dir_path( __FILE__ ));
 define( 'JMEMBERS_URL', plugin_dir_url( __FILE__ ) );
 require( JMEMBERS_PATH . 'core/classes/Membership.php' );
 require( JMEMBERS_PATH . 'core/classes/Package.php' );
+require( JMEMBERS_PATH . 'core/classes/Transaction.php' );
+require( JMEMBERS_PATH . 'core/admin/profile_fields.php' );
+require( JMEMBERS_PATH . 'core/admin/metabox.php' );
 require( JMEMBERS_PATH . 'core/pages/main.php' );
 require( JMEMBERS_PATH . 'core/pages/memberships.php' );
 require( JMEMBERS_PATH . 'core/pages/members.php' );
 require( JMEMBERS_PATH . 'core/pages/packages.php' );
 require( JMEMBERS_PATH . 'core/pages/settings.php' );
+require( JMEMBERS_PATH . 'core/shortcodes/user_registration.php' );
+require( JMEMBERS_PATH . 'core/shortcodes/transactions.php' );
+require( JMEMBERS_PATH . 'core/functions/ajax.php' );
 require( JMEMBERS_PATH . 'core/functions/get.php' );
 require( JMEMBERS_PATH . 'core/functions/has.php' );
 require( JMEMBERS_PATH . 'core/functions/is.php' );
-require( JMEMBERS_PATH . 'core/metabox.php' );
+require( JMEMBERS_PATH . 'core/functions/process.php' );
 require( JMEMBERS_PATH . 'core/filters.php' );
+// PayPal Pro
+require( JMEMBERS_PATH . 'core/lib/payment/PayPalPro/PayPalPro.php' );
+require( JMEMBERS_PATH . 'core/lib/payment/PayPalPro/CreateRecurringPaymentsProfile.php' );
+
+$jmembers_settings = get_option('jmembers_settings');
 
 Class JA_Members {
 	public function __construct(){
@@ -71,7 +82,8 @@ Class JA_Members {
 				ID mediumint(9) NOT NULL AUTO_INCREMENT,
 				post_id mediumint(9) NOT NULL,
 				user_id mediumint(9) NOT NULL,
-				expire_date bigint(12) NULL
+				expire_date bigint(12) NULL,
+				UNIQUE KEY ID (ID)
 			);";
 			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 			dbDelta($sql);

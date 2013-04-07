@@ -1,28 +1,78 @@
 <?php
 Class JMembers_Package {
+	
+	/**
+	*
+	* @var int
+	*/
 	public $ID;
-	private $membership_id;
-	private $duration;
-	private $duration_type;
-	private $price ;
-	private $billing;
-	private $description;
-	private $expired_package;
-	private $display; // Array
-	private $menu_order;
-	private $payment; // Array
 
-	public function __construct( $membership_id, $duration = 0, $duration_type = 0, $price = 0, $billing = 0, $description = NULL, $expired_package = 0, $display = NULL, $menu_order = 0, $payment = NULL ){
-		$this->membership_id   = (int)$membership_id;
-		$this->duration        = (int)$duration;
-		$this->duration_type   = (int)$duration_type;
-		$this->price           = (float)$price;
-		$this->billing         = (int)$billing;
-		$this->description     = (String)$description;
-		$this->expired_package = (int)$expired_package;
-		$this->display         = serialize($display);
-		$this->menu_order      = (int)$menu_order;
-		$this->payment         = serialize($payment);
+	/**
+	*
+	* @var int
+	*/
+	public $membership_id;
+
+	/**
+	*
+	* @var int
+	*/
+	public $duration;
+	
+	/**
+	*
+	* @var int
+	*/
+	public $duration_type;
+	
+	/**
+	*
+	* @var float
+	*/
+	public $price ;
+	
+	/**
+	*
+	* @var int
+	*/
+	public $billing;
+
+	/**
+	*
+	* @var string
+	*/
+	public $description;
+
+	/**
+	*
+	* @var int
+	*/
+	public $expired_package;
+
+	/**
+	*
+	* @var string
+	*/
+	public $display;
+
+	/**
+	*
+	* @var int
+	*/
+	public $menu_order;
+
+	/**
+	*
+	* @var string
+	*/
+	public $payment;
+
+	public function __construct( $package = NULL ){
+		if( $package == NULL )
+			return TRUE;
+
+		foreach( get_object_vars($package) as $key=>$value )
+			$this->$key = $value;
 	}
 
 	public function add(){
@@ -32,9 +82,7 @@ Class JMembers_Package {
 		$data   = get_object_vars($this);
 		unset( $data['ID'] );
 
-		$format = array( '%d', '%d', '%d', '%f', '%d', '%s', '%d', '%s', '%d', '%s' );
-
-		if( !$wpdb->insert( $table, $data, $format ) )
+		if( !$wpdb->insert( $table, $data ) )
 			return FALSE;
 
 		$this->ID = $wpdb->insert_id;
@@ -46,13 +94,14 @@ Class JMembers_Package {
 		global $wpdb;
 		$table = $wpdb->prefix.'jm_packages';
 
+		$ID = (int) $ID;
+
 		$data   = get_object_vars($this);
 		unset( $data['ID'] );
 
 		$where  = array( 'ID' => $ID );
-		$format = array( '%d', '%d', '%d', '%f', '%d', '%s', '%d', '%s', '%d', '%s' );
 
-		if( !$wpdb->update( $table, $data, $where, $format ) )
+		if( !$wpdb->update( $table, $data, $where ) )
 			return FALSE;
 
 		return TRUE;
@@ -62,11 +111,11 @@ Class JMembers_Package {
 		global $wpdb;
 		$table = $wpdb->prefix.'jm_packages';
 
+		$ID = (int) $ID;
+
 		$query = "DELETE FROM $table WHERE ID = %d";
 
-		$result = $wpdb->query( $wpdb->prepare( $query, $ID ) );
-
-		if( !$result || $result == 0 )
+		if( !$wpdb->query( $wpdb->prepare( $query, $ID ) ) )
 			return FALSE;
 
 		return TRUE;

@@ -262,13 +262,14 @@ Class JMembers_Page_Memberships{
 			die();
 		endif;
 
-		$membership = new JMembers_Membership( $_POST['name'] );
+		$membership       = new JMembers_Membership();
+		$membership->name = (String) $_POST['name'];
 
-		if( $membership->add() == TRUE ):
-			echo 1;
-		else:
+		if( !$membership->add() ):
 			echo __( 'Error adding membership.', 'jmembers' );
 		endif;
+
+		echo 1;
 
 		die();
 	}
@@ -279,9 +280,7 @@ Class JMembers_Page_Memberships{
 			die();
 		endif;
 
-		$membership_id = $_POST['membership_id'];
-
-		$result = JMembers_Membership::delete($membership_id);
+		$result = JMembers_Membership::delete( $_POST['membership_id'] );
 
 		if( $result == TRUE ):
 			echo 1;

@@ -4,7 +4,6 @@ Class JMembers_Metabox{
 		add_action( 'add_meta_boxes', array( &$this, 'init' ) );
 		add_action( 'save_post', array( &$this, 'save' ) );
 		add_action( 'admin_enqueue_scripts', array( &$this, 'scripts' ) );
-		add_action( 'admin_enqueue_scripts', array( &$this, 'stylesheets' ) );
 		add_action( 'wp_ajax_jmembers_more_link', array( &$this, 'ajax_more_link' ) );
 	}
 
@@ -18,20 +17,16 @@ Class JMembers_Metabox{
 		wp_enqueue_script( 'jmembers_metabox' );
 	}
 
-	public function stylesheets(){
-
-	}
-
 	public function metabox( $post ){
 		$settings = get_post_meta( $post->ID, '_jmembers_settings', true );
 
 		if( $settings != NULL ):
 			$payperpost = $settings['payperpost'];
-			$price = $settings['price'];
+			$price      = $settings['price'];
 			$data_array = $settings['available'];
 		else:
 			$payperpost = 1;
-			$price = 4;
+			$price      = 4;
 			$data_array = array();
 		endif;
 ?>
@@ -47,6 +42,10 @@ Class JMembers_Metabox{
 
 	<div id="jmembers-more" style="display:none">
 	<h4><?php _e( 'Available for Membership:', 'jmembers' ) ?></h4>
+	<p>
+		<input type="checkbox" name="membership_0" id="membership_0" value="0" <?php if( array_key_exists( 0, $data_array ) ) echo 'checked'; ?> />
+		<label for="membership_0"><?php _e( 'Guest', 'jmembers' ) ?></label>
+	</p>
 <?php
 		$memberships = get_memberships();
 		if( $memberships == NULL ):

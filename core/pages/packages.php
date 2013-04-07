@@ -19,21 +19,22 @@ Class JMembers_Page_Packages{
 			die();
 		endif;
 
-		$membership_id   = $_POST['membership_id'];
-		$duration        = $_POST['duration'];
-		$duration_type   = $_POST['duration_type'];
-		$price           = $_POST['price'];
-		$billing         = $_POST['billing'];
-		$description     = $_POST['description'];
-		$expired_package = $_POST['expired_package'];
-		$display         = array(
+		$display = array(
 			'display_registration' => $_POST['display_registration'],
 			'display_upgrade'      => $_POST['display_upgrade'],
 			'display_extend'       => $_POST['display_extend']
 		);
-		$menu_order      = $_POST['menu_order'];
 
-		$package = new JMembers_Package( $membership_id, $duration, $duration_type, $price, $billing, $description, $expired_package, $display, $menu_order );
+		$package                  = new JMembers_Package();
+		$package->membership_id   = (int) $_POST['membership_id'];
+		$package->duration        = (int) $_POST['duration'];
+		$package->duration_type   = (int) $_POST['duration_type'];
+		$package->price           = (float) $_POST['price'];
+		$package->billing         = (int) $_POST['billing'];
+		$package->description     = (String) $_POST['description'];
+		$package->expired_package = (int) $_POST['expired_package'];
+		$package->display         = serialize($display);
+		$package->menu_order      = (int) $_POST['menu_order'];
 
 		if( !$package->add() ):
 			echo __( 'Error adding package.', 'jmembers' );
@@ -51,24 +52,24 @@ Class JMembers_Page_Packages{
 			die();
 		endif;
 
-		$package_id      = $_POST['package_id'];
-		$membership_id   = $_POST['membership_id'];
-		$duration        = $_POST['duration'];
-		$duration_type   = $_POST['duration_type'];
-		$price           = $_POST['price'];
-		$billing         = $_POST['billing'];
-		$description     = $_POST['description'];
-		$expired_package = $_POST['expired_package'];
-		$display         = array(
+		$display = array(
 			'display_registration' => $_POST['display_registration'],
 			'display_upgrade'      => $_POST['display_upgrade'],
 			'display_extend'       => $_POST['display_extend']
 		);
-		$menu_order      = $_POST['menu_order'];
 
-		$package = new JMembers_Package( $membership_id, $duration, $duration_type, $price, $billing, $description, $expired_package, $display, $menu_order );
+		$package                  = new JMembers_Package();
+		$package->membership_id   = (int) $_POST['membership_id'];
+		$package->duration        = (int) $_POST['duration'];
+		$package->duration_type   = (int) $_POST['duration_type'];
+		$package->price           = (float) $_POST['price'];
+		$package->billing         = (int) $_POST['billing'];
+		$package->description     = (String) $_POST['description'];
+		$package->expired_package = (int) $_POST['expired_package'];
+		$package->display         = serialize($display);
+		$package->menu_order      = (int) $_POST['menu_order'];
 
-		if( !$package->update( $package_id ) ):
+		if( !$package->update( $_POST['package_id'] ) ):
 			echo __( 'Error updating package.', 'jmembers' );
 			die();
 		endif;
