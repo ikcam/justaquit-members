@@ -183,6 +183,12 @@ Class JM_Ajax{
 				$response['message'] = __( 'Error trying to email you.', 'jmembers' );
 			endif;
 
+			wp_signon( array(
+					'user_login'    => $userdata['user_login'],
+					'user_password' => $userdata['user_pass'],
+					'remember'      => false
+				) , true );
+
 			$response['url'] = $jmembers_settings['page_transactions'].'?user_id='.$response['user_id'].'&package='.$response['package_id'].'&processor='.$response['payment_processor'];
 			
 			die( json_encode( $response ) );
