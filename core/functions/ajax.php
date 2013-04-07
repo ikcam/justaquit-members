@@ -173,14 +173,14 @@ Class JM_Ajax{
 			// Add User ID to response array
 			$response['user_id'] = $user_id;
 
-			add_user_meta( $user_id, '_address', $userdata['address'], true );
-			add_user_meta( $user_id, '_city', $userdata['city'], true );
-			add_user_meta( $user_id, '_state', $userdata['state'], true );
-			add_user_meta( $user_id, '_zip', $userdata['zip'], true );
-			add_user_meta( $user_id, '_country', $userdata['country'], true );
+			add_user_meta( $user_id, '_address', $userdata['address'], TRUE );
+			add_user_meta( $user_id, '_city', $userdata['city'], TRUE );
+			add_user_meta( $user_id, '_state', $userdata['state'], TRUE );
+			add_user_meta( $user_id, '_zip', $userdata['zip'], TRUE );
+			add_user_meta( $user_id, '_country', $userdata['country'], TRUE );
 
-			if( !process_email_user_registration( $userdata ) ):
-				$response['message'] = __( 'An error ocurred trying to email you the user information.', 'jmembers' );
+			if( process_email_user_registration( $userdata ) == FALSE ):
+				$response['message'] = __( 'Error trying to email you.', 'jmembers' );
 			endif;
 
 			$response['url'] = $jmembers_settings['page_transactions'].'?user_id='.$response['user_id'].'&package='.$response['package_id'].'&processor='.$response['payment_processor'];
