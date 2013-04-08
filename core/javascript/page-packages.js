@@ -7,16 +7,30 @@ jQuery(document).ready(function($){
 
 		var display_registration = 0, display_upgrade = 0, display_extend = 0, billing = 0;
 
-		if ( $(this).find('#display_registration').is(':checked') ){
+		if( $(this).find('#display_registration').is(':checked') ){
 			display_registration = 1;
 		}
 
-		if ( $(this).find('#display_upgrade').is(':checked') ){
+		if( $(this).find('#display_upgrade').is(':checked') ){
 			display_upgrade = 1;
 		}
 
-		if ( $(this).find('#display_extend').is(':checked') ){
+		if( $(this).find('#display_extend').is(':checked') ){
 			display_extend = 1;
+		}
+
+		var payment_pppro = 0, payment_ppstandard = 0, payment_1sc = 0;
+
+		if( $(this).find('#payment_pppro').is(':checked') ){
+			payment_pppro = 1;
+		}
+
+		if( $(this).find('#payment_ppstandard').is(':checked') ){
+			payment_ppstandard = 1;
+		}
+
+		if( $(this).find('#payment_1sc').is(':checked') ){
+			payment_1sc = 1;
 		}
 
 		if( $(this).find('#billing_1').is(':checked') ){
@@ -36,6 +50,9 @@ jQuery(document).ready(function($){
 			display_registration: display_registration,
 			display_upgrade:      display_upgrade,
 			display_extend:       display_extend,
+			payment_pppro:        payment_pppro,
+			payment_ppstandard:   payment_ppstandard,
+			payment_1sc:          payment_1sc,
 			menu_order:           $(this).find('#menu_order').val()
 		}
 
@@ -74,6 +91,24 @@ jQuery(document).ready(function($){
 			display_extend = 1;
 		}
 
+		var payment_pppro = 0, payment_ppstandard = 0, payment_1sc = 0;
+		
+		if( $(this).find('#payment_pppro').is(':checked') ){
+			payment_pppro = 1;
+		}
+
+		if( $(this).find('#payment_ppstandard').is(':checked') ){
+			payment_ppstandard = 1;
+		}
+
+		if( $(this).find('#payment_1sc').is(':checked') ){
+			payment_1sc = 1;
+		}
+
+		if( $(this).find('#billing_1').is(':checked') ){
+			billing = 1;
+		}
+
 		if( $(this).find('#billing_1').is(':checked') ){
 			billing = 1;
 		}
@@ -92,6 +127,9 @@ jQuery(document).ready(function($){
 			display_registration: display_registration,
 			display_upgrade:      display_upgrade,
 			display_extend:       display_extend,
+			payment_pppro:        payment_pppro,
+			payment_ppstandard:   payment_ppstandard,
+			payment_1sc:          payment_1sc,
 			menu_order:           $(this).find('#menu_order').val()
 		}
 

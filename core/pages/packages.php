@@ -25,6 +25,12 @@ Class JMembers_Page_Packages{
 			'display_extend'       => $_POST['display_extend']
 		);
 
+		$payment = array(
+			'pppro'      => $_POST['payment_pppro'],
+			'ppstandard' => $_POST['payment_ppstandard'],
+			'1sc'        => $_POST['payment_1sc']
+		);
+
 		$package                  = new JMembers_Package();
 		$package->membership_id   = (int) $_POST['membership_id'];
 		$package->duration        = (int) $_POST['duration'];
@@ -34,6 +40,7 @@ Class JMembers_Page_Packages{
 		$package->description     = (String) $_POST['description'];
 		$package->expired_package = (int) $_POST['expired_package'];
 		$package->display         = serialize($display);
+		$package->payment         = serialize($payment);
 		$package->menu_order      = (int) $_POST['menu_order'];
 
 		if( !$package->add() ):
@@ -58,6 +65,12 @@ Class JMembers_Page_Packages{
 			'display_extend'       => $_POST['display_extend']
 		);
 
+		$payment = array(
+			'pppro'      => $_POST['payment_pppro'],
+			'ppstandard' => $_POST['payment_ppstandard'],
+			'1sc'        => $_POST['payment_1sc']
+		);
+
 		$package                  = new JMembers_Package();
 		$package->membership_id   = (int) $_POST['membership_id'];
 		$package->duration        = (int) $_POST['duration'];
@@ -67,6 +80,7 @@ Class JMembers_Page_Packages{
 		$package->description     = (String) $_POST['description'];
 		$package->expired_package = (int) $_POST['expired_package'];
 		$package->display         = serialize($display);
+		$package->payment         = serialize($payment);
 		$package->menu_order      = (int) $_POST['menu_order'];
 
 		if( !$package->update( $_POST['package_id'] ) ):

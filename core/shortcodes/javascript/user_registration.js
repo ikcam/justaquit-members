@@ -185,7 +185,7 @@ jQuery(document).ready(function($){
 	
 	$('#user_pass_confirm').live( 'change', function(){ check_pass() } );
 
-	$('#user_registration').submit(function(){
+	$('form#user_registration').submit(function(){
 		var parent = $(this);
 		//$(this).find('#submit').prop('disabled', true);
 		$(parent).find('input').each(function(){ $(this).prop('disabled', true) });

@@ -5,6 +5,8 @@ Class JM_Ajax{
 		add_action( 'wp_ajax_nopriv_jmembers_check_email', array( &$this, 'check_email' ) );
 		add_action( 'wp_ajax_nopriv_jmembers_check_pass', array( &$this, 'check_pass' ) );
 		add_action( 'wp_ajax_nopriv_jmembers_user_registration', array( &$this, 'user_registration' ) );
+		add_action( 'wp_ajax_nopriv_jmembers_transaction', array( &$this, 'transaction' ) );
+		
 	}
 
 	public function check_user(){
@@ -183,13 +185,13 @@ Class JM_Ajax{
 				$response['message'] = __( 'Error trying to email you.', 'jmembers' );
 			endif;
 
-			wp_signon( array(
+			$user = wp_signon( array(
 					'user_login'    => $userdata['user_login'],
 					'user_password' => $userdata['user_pass'],
 					'remember'      => false
 				) , true );
 
-			$response['url'] = $jmembers_settings['page_transactions'].'?user_id='.$response['user_id'].'&package='.$response['package_id'].'&processor='.$response['payment_processor'];
+			$response['url'] = $jmembers_settings['page_transactions'].'?package='.$response['package_id'].'&processor='.$response['payment_processor'];
 			
 			die( json_encode( $response ) );
 		endif;
@@ -198,8 +200,26 @@ Class JM_Ajax{
 	}
 
 	public function transaction(){
-		if( !empty($_POST) && wp_verify_nonce( $_POST['jmembers_nonce'], 'transaction' ) ):
+		if( !empty($_POST) && wp_verify_nonce( $_POST['jmembers_nonce'], 'transactions' ) ):
+			$data = array(
+				'user_id'        => intval( $_POST['user_id'] ),
+				'package_id'     => intval( $_POST['package_id'] ),
+				'creditcardtype' => sanitize_text_field( $_POST['creditcardtype'] ),
+				'acct'           => $_POST['acct'],
+				'expdate'        => $_POST['expdate'],
+				'user_email'     => sanitize_email( $_POST['user_email'] ),
+				'first_name'     => sanitize_text_field( $_POST['first_name'] ),
+				'last_name'      => sanitize_text_field( $_POST['last_name'] ),
+				'address'        => sanitize_text_field( $_POST['address'] ),
+				'city'           => sanitize_text_field( $_POST['city'] ),
+				'state'          => sanitize_text_field( $_POST['state'] ),
+				'zip'            => sanitize_text_field( $_POST['zip'] ),
+				'country'        => sanitize_text_field( $_POST['country'] )
+			);
 
+			if( has_profile_id() && is_user_expired() ):
+
+			endif;
 		endif;
 
 		die( __( 'Error passing security check.', 'jmembers' ) );

@@ -117,6 +117,23 @@ Class JMembers_Page_Memberships{
 						</td>
 					</tr>
 					<tr valign="top">
+						<th scope="row"><label><?php _e( 'Payment Settings', 'jmembers' ) ?></label></th>
+						<td>
+<?php
+	$payment = unserialize($package->payment);
+?>
+							<input type="checkbox" name="payment_pppro" id="payment_pppro" <?php if( $payment['pppro'] == 1 ) echo 'checked'; ?> />
+							<label for="payment_pppro"><?php _e( 'PayPal Pro', 'jmembers' ) ?></label>
+							&nbsp;
+							<input type="checkbox" name="payment_ppstandard" id="payment_ppstandard" <?php if( $payment['ppstandard'] == 1 ) echo 'checked'; ?> />
+							<label for="payment_ppstandard"><?php _e( 'PayPal Standard', 'jmembers' ) ?></label>
+							&nbsp;
+							<input type="checkbox" name="payment_1sc" id="payment_1sc" <?php if( $payment['1sc'] == 1 ) echo 'checked'; ?> />
+							<label for="payment_1sc"><?php _e( '1Shopping Cart', 'jmembers' ) ?></label>
+							&nbsp;
+						</td>
+					</tr>
+					<tr valign="top">
 						<th scope="row"><label for="menu_order"><?php _e( 'Menu Order', 'jmembers' ) ?>:</label></th>
 						<td>
 							<input type="text" name="menu_order" id="menu_order" value="<?php echo $package->menu_order ?>" />
@@ -197,14 +214,28 @@ Class JMembers_Page_Memberships{
 				<tr valign="top">
 					<th scope="row"><label><?php _e( 'Display Settings', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="checkbox" name="display_registration" id="display_registration" checked="checked" />
+						<input type="checkbox" name="display_registration" id="display_registration" checked />
 						<label for="display_registration"><?php _e( 'Register page', 'jmembers' ) ?></label>
 						&nbsp;
-						<input type="checkbox" name="display_upgrade" id="display_upgrade" checked="checked" />
+						<input type="checkbox" name="display_upgrade" id="display_upgrade" checked />
 						<label for="display_upgrade"><?php _e( 'Upgrade page', 'jmembers' ) ?></label>
 						&nbsp;
-						<input type="checkbox" name="display_extend" id="display_extend" checked="checked" />
+						<input type="checkbox" name="display_extend" id="display_extend" checked />
 						<label for="display_extend"><?php _e( 'Extend page', 'jmembers' ) ?></label>
+					</td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label><?php _e( 'Payment Settings', 'jmembers' ) ?></label></th>
+					<td>
+						<input type="checkbox" name="payment_pppro" id="payment_pppro" />
+						<label for="payment_pppro"><?php _e( 'PayPal Pro', 'jmembers' ) ?></label>
+						&nbsp;
+						<input type="checkbox" name="payment_ppstandard" id="payment_ppstandard" />
+						<label for="payment_ppstandard"><?php _e( 'PayPal Standard', 'jmembers' ) ?></label>
+						&nbsp;
+						<input type="checkbox" name="payment_1sc" id="payment_1sc" />
+						<label for="payment_1sc"><?php _e( '1Shopping Cart', 'jmembers' ) ?></label>
+						&nbsp;
 					</td>
 				</tr>
 				<tr valign="top">

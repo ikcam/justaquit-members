@@ -11,99 +11,84 @@ Class JM_Shotcode_Transactions{
 	}
 
 	public function shortcode(){
-		global $jmembers_settings;
-
-		if( !empty( $_POST ) ):
-			if( $package == NULL ):
-				_e( 'You selected and invalid package.', 'jmembers' );
-				return;
-			endif;
-
-			$profile = new PayPalPro_CreateProfile();
-			$profile->creditcardtype     = sanitize_text_field( $_POST['creditcardtype'] );
-			$profile->acct               = sanitize_text_field( $_POST['acct'] );
-			$profile->expdate            = $_POST['expdate_month'] . $_POST['expdate_year'];
-			$profile->cvv2               = $_POST['cvv2'];
-			// Billing Information
-			$profile->firstname          = sanitize_text_field( $_POST['first_name'] );
-			$profile->lastname           = sanitize_text_field( $_POST['last_name'] );
-			$profile->address            = sanitize_text_field( $_POST['address'] );
-			$profile->city               = sanitize_text_field( $_POST['city'] );
-			$profile->state              = sanitize_text_field( $_POST['state'] );
-			$profile->country            = sanitize_text_field( $_POST['country'] );
-			$profile->zip                = sanitize_text_field( $_POST['zip'] );
-			// Package information
-			$package = get_package( $_POST['package'] );
-
-			switch( $package->duration_type ){
-				case 1:
-					$billing_period = 'Year';
-					break;
-				case 2:
-					$billing_period = 'Month';
-					break;
-				case 3:
-					$billing_period = 'Week';
-					break;
-				case 4:
-					$billing_period = 'Day';
-					break;
-				default:
-					return;
-			}
-
-			$profile->amt                = $package->price;
-			$profile->currencycode       = 'USD';
-			$profile->desc               = get_package_name( $package->ID );
-			$profile->billingperiod      = $billing_period;
-			$profile->billingfrequency   = $package->duration;
-			$profile->profilestartdate   = date('Y-m-d', strtotime(current_time( 'mysql' ))).'T00:00:00Z';
-
-			$paypalpro = new JM_Payment_PayPalPro();
-			$result = $paypalpro->process( $profile->toString(), 'CreateRecurringPaymentsProfile' );
-
-			if( $result == FALSE ):
-				echo $jmembers_settings['message_transaction_error'];
-				return;
-			endif;
-			
-			$user_id = (int) $_POST['user'];
-			$package_id = (int) $_POST['package'];
-
-			add_user_meta( $user_id, '_package', $package_id, true );
-			add_user_meta( $user_id, '_status', $result['PROFILESTATUS'], true );
-			add_user_meta( $user_id, '_profile_id', $result['PROFILEID'], true );
-			add_user_meta( $user_id, '_datetime_join', strtotime(current_time( 'mysql' )), true );
-
-			$transaction             = new JMembers_Transaction();
-			$transaction->user_id    = (int) $_POST['user'];
-			$transaction->package_id = (int) $_POST['package'];
-			$transaction->datetime   = strtotime( current_time( 'mysql' ) );
-			$transaction->data       = serialize( $result );
-			$transaction->add();
-
-			echo $jmembers_settings['message_transaction_correct'];
+		$user_id = get_current_user_id();
+		
+		if( $user_id == 0 ):
+			_e( 'You need to be login to access this page.', 'jmembers' );
 
 			return;
 		endif;
 
-		if( isset( $_GET['user_id'] ) && isset( $_GET['package'] ) && isset( $_GET['processor'] ) ):
-			$user = get_userdata( $_GET['user_id'] );
-			$package = get_package( $_GET['package'] );
+		$userdata = get_userdata( $user_id );
 
-			if( !$user ){
-				return  'Usuario invalido';
-			}
+		$data = array(
+			'user_id'    => $user_id,
+			'user_login' => $userdata->user_login,
+			'user_email' => $userdata->user_email,
+			'first_name' => $userdata->user_firstname,
+			'last_name'  => $userdata->user_lastname,
+			'address'    => get_user_meta( $user_id, '_address', true ),
+			'city'       => get_user_meta( $user_id, '_city', true ),
+			'state'      => get_user_meta( $user_id, '_state', true ),
+			'zip'        => get_user_meta( $user_id, '_zip', true ),
+			'country'    => get_user_meta( $user_id, '_country', true )
+		);
 
-			if( $package == NULL ){
-				return 'Paquete invalido.';
-			}
+		if( isset( $_GET['package'] ) && isset( $_GET['action'] ) && isset( $_GET['processor'] ) ):
+			$data['package_id'] = (int) $_GET['package'];
+
+			if( $_GET['action'] == 'new' && is_package_available_register( $data['package_id'] ) ):
+				if( !is_processor_for_package( $data['package_id'], $_GET['processor'] ) ):
+					_e( 'Payment module not available for this package.', 'jmembers' );
+					return;
+				endif;
+				
+				get_payment_processor( $_GET['processor'] );
+
+				return;
+			elseif( $_GET['action'] == 'upgrade' && is_package_available_upgrade( $data['package_id'] ) ):
+
+
+				return;
+			elseif( $_GET['action'] == 'extend' && is_package_available_extend( $data['package_id'] ) ):
+
+
+				return;
+			else:
+
+				return;
+			endif;
+		elseif( isset( $_GET['post'] ) && isset( $_GET['processor'] ) ):
+			$data['post_id'] = (int) $_GET['post_id'];
+
+			if( $_GET['processor'] == '' ):
+
+				return;
+			elseif( $_GET['processor'] == '' ):
+
+				return;
+			elseif( $_GET['processor'] == '' ):
+
+				return;
+			else:
+
+				return;
+			endif;
+		else:
+			_e( 'So... why are you here?', 'jmembers' );
+			return;
+		endif;
+	}
+
+	private function pppro_form( $data ){
 ?>
-
-	<form method="post" action="">
-		<input type="hidden" name="processor" id="processor" value="ppro" />
-		<input type="hidden" name="package" id="package" value="<?php echo $_POST['package_id'] ?>" />
-		<input type="hidden" name="user" id="user" value="<?php echo $user_id ?>" />
+	<form id="transaction" method="post" action="">
+<?php if( isset( $data['package_id'] ) ): ?>
+		<input type="hidden" name="package" id="package" value="<?php echo $data['package_id'] ?>" />
+<?php else: ?>
+		<input type="hidden" name="post" id="post" value="<?php echo $data['post_id'] ?>" />
+<?php endif; ?>
+		<input type="hidden" name="user" id="user" value="<?php echo $data['user_id'] ?>" />
 		<?php wp_nonce_field( 'transactions', 'jmembers_nonce' ) ?>
 		<h3><?php _e( 'Credit Cart Information', 'jmembers' ) ?></h3>
 		<table class="form-table">
@@ -122,13 +107,13 @@ Class JM_Shotcode_Transactions{
 			<tr valign="top">
 				<th scope="row"><label for="acct"><?php _e( 'Number', 'jmembers' ) ?></label></th>
 				<td>
-					<input type="text" name="acct" id="acct" pattern="[0-9]{16}" value="<?php if( isset( $_POST['acct'] ) ) echo $_POST['acct']; ?>" required />
+					<input type="text" name="acct" id="acct" pattern="[0-9]{16}" required />
 				</td>
 			</tr>
 			<tr valign="top">
 				<th scope="row"><label for="expdate"><?php _e( 'Expiration', 'jmembers' ) ?></label></th>
 				<td>
-					<select name="expdate_month">
+					<select name="expdate_month" id="expdate_month">
 <?php
 	for( $i = 1; $i <= 12; $i++ ){
 ?>
@@ -137,7 +122,7 @@ Class JM_Shotcode_Transactions{
 	}
 ?>
 					</select>
-					<select name="expdate_year">
+					<select name="expdate_year" id="expdate_year">
 <?php
 	for( $i = 2013; $i <= 2036; $i++ ){
 ?>
@@ -151,63 +136,82 @@ Class JM_Shotcode_Transactions{
 			<tr valign="top">
 				<th scope="row"><label for="cvv2"><?php _e( 'CVV2', 'jmembers' ) ?></label></th>
 				<td>
-					<input type="text" name="cvv2" id="cvv2" pattern="[0-9]{3}" value="<?php if( isset( $_POST['cvv2'] ) ) echo $_POST['cvv2']; ?>" required />
+					<input type="text" name="cvv2" id="cvv2" pattern="[0-9]{3}" required />
 				</td>
 			</tr>
 		</tbody>
 		</table>
-
-		<input type="radio" value="0" name="use_userdata" id="use_userdata_0" checked />
-		<label for="use_userdata_0"><?php _e( 'Use your current information?' , 'jmembers' ) ?></label>
+		<p>
+			<input type="radio" value="0" name="use_userdata" id="use_userdata_0" checked />
+			<label for="use_userdata_0"><?php _e( 'Use your current information?' , 'jmembers' ) ?></label>
+		</p>
 		<div id="use_userdata">
 			<table class="form-table">
 			<tbody>
 				<tr valign="top">
 					<th scope="row"><label for="user_email"><?php _e( 'Email', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="text" name="user_email" id="user_email" value="<?php echo $userdata['user_email'] ?>" readonly />
+						<input type="text" name="user_email" id="user_email" value="<?php echo $data['user_email'] ?>" readonly />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="first_name"><?php _e( 'First Name', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="text" name="first_name" id="first_name" value="<?php echo $userdata['first_name'] ?>" readonly />
+						<input type="text" name="first_name" id="first_name" value="<?php echo $data['first_name'] ?>" readonly />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="last_name"><?php _e( 'Last Name', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="text" name="last_name" id="last_name" value="<?php echo $userdata['last_name'] ?>" readonly />
+						<input type="text" name="last_name" id="last_name" value="<?php echo $data['last_name'] ?>" readonly />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="address"><?php _e( 'Address', 'jmembers' ) ?></label></th>
 					<td>
-						<textarea name="address" id="address" readonly><?php echo sanitize_text_field( $_POST['address'] )?></textarea>
+						<textarea name="address" id="address" readonly><?php echo $data['address'] ?></textarea>
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="city"><?php _e( 'City', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="text" name="city" id="city" value="<?php echo sanitize_text_field( $_POST['city'] ) ?>" readonly />
+						<input type="text" name="city" id="city" value="<?php echo $data['city'] ?>" readonly />
 					</td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="state"><?php _e( 'State', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="text" name="state" id="state" value="<?php echo sanitize_text_field( $_POST['state'] ) ?>" readonly />
+<?php
+	if( $data['country'] == 'US' ):
+		$states = get_states();
+?>
+						<select name="state" id="state">
+<?php
+		foreach( $states as $key => $value ):
+?>
+							<option value="<?php echo $key ?>" <?php if( $data['state'] != $key ) echo 'disabled'; ?>><?php echo $value ?></option>
+<?php
+		endforeach;
+?>
+						</select>
+<?php
+	else:
+?>
+						<input type="text" name="state" id="state" value="<?php echo $data['state'] ?>" readonly />
+<?php
+	endif;
+?>
 					</td>
 				</tr>
 				<tr valign="top">
 					<th><label for="country"><?php _e( 'Country', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="hidden" name="country" id="country" value="<?php echo sanitize_text_field( $_POST['country'] ) ?>" />
-						<select onmouseover="this.disabled=true;" onmouseout="this.disabled=false;">
+						<select name="country" id="country">
 <?php
 	$countries = get_countries();
 	foreach( $countries as $key => $value ):
 ?>
-							<option value="<?php echo $key ?>" <?php if(  isset( $_POST['country'] ) && ($_POST['country'] == $key) ) echo 'selected'; ?>>
+							<option value="<?php echo $key ?>" <?php if( $data['country'] != $key ) echo 'disabled'; ?>>
 								<?php echo $value ?>
 							</option>
 <?php
@@ -219,15 +223,17 @@ Class JM_Shotcode_Transactions{
 				<tr valign="top">
 					<th scope="row"><label for="zip"><?php _e( 'ZIP', 'jmembers' ) ?></label></th>
 					<td>
-						<input type="text" name="zip" id="zip" value="<?php echo sanitize_text_field( $_POST['zip'] ) ?>" readonly />
+						<input type="text" name="zip" id="zip" value="<?php echo $data['zip'] ?>" readonly />
 					</td>
 				</tr>
 			</tbody>
 			</table>
 		</div>
 		<br />
-		<input type="radio" value="1" name="use_userdata" id="use_userdata_1" />
-		<label for="use_userdata_1"><?php _e( 'No, use another information', 'jmembers' ) ?></label>
+		<p>
+			<input type="radio" value="1" name="use_userdata" id="use_userdata_1" />
+			<label for="use_userdata_1"><?php _e( 'No, use another information', 'jmembers' ) ?></label>
+		</p>
 		<div id="use_userdata_no" style="display:none;">
 			<table class="form-table">
 			<tbody>
@@ -280,7 +286,7 @@ endforeach;
 				<tr valign="top">
 					<th><label for="country"><?php _e( 'Country', 'jmembers' ) ?></label></th>
 					<td>
-						<select name="country" id="country" disabled>
+						<select name="country" id="country" disabled onlick="$(this).prop('disabled',true)">
 <?php
 	$countries = get_countries();
 	foreach( $countries as $key => $value ):
@@ -301,12 +307,13 @@ endforeach;
 			</tbody>
 			</table>
 		</div>
+
 		<p class="form-submit">
 			<input class="button-primary" type="submit" name="submit" id="submit" value="<?php _e( 'Pay Now', 'jmembers' ) ?>" />
 		</p>
 	</form>
+
 <?php
-		endif;
 	}
 }
 new JM_Shotcode_Transactions();

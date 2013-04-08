@@ -15,3 +15,18 @@ function has_bought_post( $post_id, $user_id ){
 
 	return FALSE;
 }
+
+function has_profile_id( $user_id = null ){
+	if( $user_id == null )
+		$user_id = get_current_user_id();
+
+	if( $user_id == null || $user_id == 0 )
+		return FALSE;
+
+	$profile_id = get_user_meta( $user_id, '_profile_id', true );
+
+	if( $profile_id == '' )
+		return FALSE;
+
+	return TRUE;
+}

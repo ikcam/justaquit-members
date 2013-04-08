@@ -97,6 +97,10 @@ function get_package_name( $ID ){
 	return $output;
 }
 
+function get_payment_processor( $processor ){
+	echo $processor;
+}
+
 function get_countries(){
 	$countries = array(
 		'AD' => 'Andorra',
