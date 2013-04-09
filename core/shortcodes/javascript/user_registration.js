@@ -187,28 +187,51 @@ jQuery(document).ready(function($){
 
 	$('form#user_registration').submit(function(){
 		var parent = $(this);
-		//$(this).find('#submit').prop('disabled', true);
-		$(parent).find('input').each(function(){ $(this).prop('disabled', true) });
-		$(parent).find('select').each(function(){ $(this).prop('disabled', true) });
-		$(parent).find('textarea').each(function(){ $(this).prop('disabled', true) });
 
-		if( check_user() == false )
-			return false;
+		function block_fields( object ){
+			$(parent).find('input').each(function(){ $(this).prop('disabled', true) });
+			$(parent).find('select').each(function(){ $(this).prop('disabled', true) });
+			$(parent).find('textarea').each(function(){ $(this).prop('disabled', true) });
+		}
 
-		if( check_email() == false )
-			return false;
+		function unblock_fields( object ){
+			$(parent).find('input').each(function(){ $(this).prop('disabled', false) });
+			$(parent).find('select').each(function(){ $(this).prop('disabled', false) });
+			$(parent).find('textarea').each(function(){ $(this).prop('disabled', false) });
+		}
 
-		if( check_pass() == false )
-			return false;
+		block_fields( parent );
 
-		if( check_package() == false )
+		if( check_user() == false ){
+			unblock_fields();
 			return false;
+		}
 
-		if( check_processor() == false )
+		if( check_email() == false ){
+			unblock_fields();
 			return false;
+		}
 
-		if( check_terms() == false )
+		if( check_pass() == false ){
+			unblock_fields();
 			return false;
+		}
+
+		if( check_package() == false ){
+			unblock_fields();
+			return false;
+		}
+
+
+		if( check_processor() == false ){
+			unblock_fields();
+			return false;
+		}
+
+		if( check_terms() == false ){
+			unblock_fields();
+			return false;
+		}
 
 		var state = function(){
 			if( check_country() == false ){
@@ -240,9 +263,7 @@ jQuery(document).ready(function($){
 
 			if( response['user_id'] == 0 ){
 				alert( response['message'] );
-				$(parent).find('input').each(function(){ $(this).prop('disabled', false) });
-				$(parent).find('select').each(function(){ $(this).prop('disabled', false) });
-				$(parent).find('textarea').each(function(){ $(this).prop('disabled', false) });
+				unblock_fields();
 
 				if( check_country() == false ){
 					$('select#state').prop('disabled', true);
