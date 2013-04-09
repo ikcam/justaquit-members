@@ -27,10 +27,10 @@ Class JMembers_Filters{
 				return $content;
 			endif;
 
-			$user_package = get_user_meta( $user_id, '_jmembers_package' );
-			$post_package = get_post_meta( $post->ID, '_jmembers_settings', true );
+			$user_membership = get_user_membership( $user_id );
+			$post_membership = get_post_meta( $post->ID, '_jmembers_settings', true );
 
-			if( is_array( $post_package ) && array_key_exists( $user_package, $post_package['available']) ):
+			if( is_array( $post_membership ) && array_key_exists( $user_membership, $post_membership['available']) ):
 				return $content;
 			endif;
 			

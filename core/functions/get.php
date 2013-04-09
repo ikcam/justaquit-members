@@ -132,6 +132,26 @@ function get_payment_form( $processor, $data ){
 		return JM_Payment_ShoppingCart::form( $data );
 }
 
+function get_user_membership( $user_id = NULL ){
+	if( $user_id == NULL )
+		$user_id = get_current_user_id();
+
+	if( $user_id == 0 )
+		return FALSE;
+
+	$package_id = get_user_meta( $user_id, '_package_id', true );
+
+	if( $package_id == ''  )
+		return FALSE;
+
+	$package = get_package( $package_id );
+
+	if( $package == NULL )
+		return FALSE;
+
+	return (int) $package->membership_id;
+}
+
 function get_countries(){
 	$countries = array(
 		'AD' => 'Andorra',
