@@ -130,19 +130,11 @@ jQuery(document).ready(function($){
 	}
 
 	function check_package(){
-		console.log( $('input[name=package_id]').filter(':checked').is() );
-
-		return false;
+		return $('input[name=package_id]').filter(':checked').prop('checked').is(true);
 	}
 
 	function check_processor(){
-		if( $('input[name=payment_processor]').prop('checked') == true ){
-			$('.processor_row').css('background', '#FFF');
-			return true;
-		} else {
-			$('.processor_row').css('background', '#e9a394');
-			return false;
-		}
+		return $('input[name=payment_processor]').filter(':checked').prop('checked').is(true);
 	}
 
 	function check_terms(){
