@@ -36,16 +36,24 @@ function process_user_next_expiration( $package_id ){
 
 	switch( $package->duration_type ){
 		case 1:
-			$output = strtotime( "+1 year", $current_time );
+			for( $i = 1; $i <= $package->duration; $i++ ){
+				$output = strtotime( "+1 year", $current_time );
+			}
 			break;
 		case 2:
-			$output = strtotime( "+1 month", $current_time );
+			for( $i = 1; $i <= $package->duration; $i++ ){
+				$output = strtotime( "+1 month", $current_time );
+			}
 			break;
 		case 3:
-			$output = strtotime( "+1 week", $current_time );
+			for( $i = 1; $i <= $package->duration; $i++ ){
+				$output = strtotime( "+1 week", $current_time );
+			}
 			break;
 		case 4:
-			$output = strtotime( "+1 day", $current_time );
+			for( $i = 1; $i <= $package->duration; $i++ ){
+				$output = strtotime( "+1 day", $current_time );
+			}
 			break;
 	}
 

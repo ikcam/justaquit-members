@@ -94,7 +94,15 @@ jQuery(document).ready(function($){
 		}
 
 		$.post( ajaxurl, data, function(response){
+			response = $.parseJSON(response);
+
 			console.log(response);
+
+			if( response['success'] = 0 ){
+				alert(response['message']);
+			} else {
+
+			}
 
 			return false;
 		});

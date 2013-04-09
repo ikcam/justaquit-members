@@ -253,7 +253,6 @@ Class JM_Ajax{
 					$profile->country          = $data['country'];
 					$profile->zip              = $data['zip'];
 					// Package information
-
 					$profile->amt              = $package->price;
 					$profile->currencycode     = 'USD';
 					$profile->desc             = get_package_name( $package->ID );
@@ -274,8 +273,9 @@ Class JM_Ajax{
 					$transaction = new JMembers_Transaction();
 					$transaction->user_id = $data['user_id'];
 					$transaction->package_id = $data['package_id'];
-					$transaction->datetime = current_time( 'mysql' );
+					$transaction->datetime = strtotime( current_time( 'mysql' ) );
 					$transaction->date = serialize( $paypalpro_result );
+					$transaction->add();
 
 					$member = new JMembers_Member();
 					$member->user_id = $data['user_id'];
