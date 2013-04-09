@@ -130,7 +130,7 @@ jQuery(document).ready(function($){
 	}
 
 	function check_package(){
-		console.log( $('input[name=package_id]').filter(':checked') );
+		console.log( $('input[name=package_id]').filter(':checked').is() );
 
 		return false;
 	}
