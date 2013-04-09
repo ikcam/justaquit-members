@@ -11,6 +11,7 @@ License: GPL2
 
 define( 'JMEMBERS_PATH' , plugin_dir_path( __FILE__ ));
 define( 'JMEMBERS_URL', plugin_dir_url( __FILE__ ) );
+require( JMEMBERS_PATH . 'core/classes/Member.php' );
 require( JMEMBERS_PATH . 'core/classes/Membership.php' );
 require( JMEMBERS_PATH . 'core/classes/Package.php' );
 require( JMEMBERS_PATH . 'core/classes/Transaction.php' );
