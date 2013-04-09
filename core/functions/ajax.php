@@ -5,8 +5,7 @@ Class JM_Ajax{
 		add_action( 'wp_ajax_nopriv_jmembers_check_email', array( &$this, 'check_email' ) );
 		add_action( 'wp_ajax_nopriv_jmembers_check_pass', array( &$this, 'check_pass' ) );
 		add_action( 'wp_ajax_nopriv_jmembers_user_registration', array( &$this, 'user_registration' ) );
-		add_action( 'wp_ajax_nopriv_jmembers_transaction', array( &$this, 'transaction' ) );
-		
+		add_action( 'wp_ajax_jmembers_transaction', array( &$this, 'transaction' ) );
 	}
 
 	public function check_user(){
@@ -106,214 +105,207 @@ Class JM_Ajax{
 	}
 
 	public function user_registration(){
-		if( !empty( $_POST ) && wp_verify_nonce( $_POST['jmembers_nonce'], 'user_registration' ) ):
-			global $jmembers_settings;
+		if( empty( $_POST ) || !wp_verify_nonce( $_POST['jmembers_nonce'], 'user_registration' ) ):
+			die( __( 'Error passing security check.', 'jmembers' ) );
+		endif;
 
-			// Response array
-			$response            = array();
-			$response['message'] = '';
+		global $jmembers_settings;
 
-			// Userdata to array
-			$userdata = array(
-				'user_login' => sanitize_user( $_POST['user_login'], true ),
-				'user_email' => sanitize_email( $_POST['user_email'] ),
-				'user_pass'  => $_POST['user_pass'],
-				'first_name' => sanitize_text_field( $_POST['first_name'] ),
-				'last_name'  => sanitize_text_field( $_POST['last_name'] ),
-				'address'    => sanitize_text_field( $_POST['address'] ),
-				'city'       => sanitize_text_field( $_POST['city'] ),
-				'state'      => sanitize_text_field( $_POST['state'] ),
-				'zip'        => sanitize_text_field( $_POST['zip'] ),
-				'country'    => sanitize_text_field( $_POST['country'] )
-			);
+		// Response array
+		$response            = array();
+		$response['message'] = '';
 
-			// Add Userdata to response array
-			$response['userdata'] = $userdata;
-			// Add Payment Processor to response array
-			$response['payment_processor'] = $_POST['payment_processor'];
+		// Userdata to array
+		$userdata = array(
+			'user_login' => sanitize_user( $_POST['user_login'], true ),
+			'user_email' => sanitize_email( $_POST['user_email'] ),
+			'user_pass'  => $_POST['user_pass'],
+			'first_name' => sanitize_text_field( $_POST['first_name'] ),
+			'last_name'  => sanitize_text_field( $_POST['last_name'] ),
+			'address'    => sanitize_text_field( $_POST['address'] ),
+			'city'       => sanitize_text_field( $_POST['city'] ),
+			'state'      => sanitize_text_field( $_POST['state'] ),
+			'zip'        => sanitize_text_field( $_POST['zip'] ),
+			'country'    => sanitize_text_field( $_POST['country'] )
+		);
 
-			// Verify selected package
-			if( !isset( $_POST['package_id'] ) ):
-				$response['user_id'] = 0;
-				$response['message'] = __( 'You didn\'t select any package.', 'jmembers' );
-				
-				die( json_encode( $response ) );
-			endif;
+		// Add Userdata to response array
+		$response['userdata'] = $userdata;
+		// Add Payment Processor to response array
+		$response['payment_processor'] = $_POST['payment_processor'];
 
-			// Add Package to response array
-			$response['package_id'] = (int) $_POST['package_id'];
-
-			// Get package
-			$package = get_package( $_POST['package_id'] );
-
-			if( $package == NULL ):
-				$response['user_id'] = 0;
-				$response['message'] = __( 'You selected an invalid package.', 'jmembers' );
-				
-				die( json_encode( $response ) );
-			endif;
-
-			$package_display = unserialize( $package->display );
-
-			if( $package_display['display_registration'] == 0 ):
-				$response['user_id'] = 0;
-				$response['message'] = __( 'You can\'t purchase this package.', 'jmembers' );
-				
-				die( json_encode( $response ) );
-			endif;
-			// End: Verify selected package
-
-			$user_id = wp_insert_user( $userdata );
-
-			if( is_wp_error($user_id) ):
-				$response['user_id'] = 0;
-				$response['message'] = $user_id->get_error_message();
-
-				die( json_encode( $response ) );
-			endif;
-
-			// Add User ID to response array
-			$response['user_id'] = $user_id;
-
-			add_user_meta( $user_id, '_address', $userdata['address'], TRUE );
-			add_user_meta( $user_id, '_city', $userdata['city'], TRUE );
-			add_user_meta( $user_id, '_state', $userdata['state'], TRUE );
-			add_user_meta( $user_id, '_zip', $userdata['zip'], TRUE );
-			add_user_meta( $user_id, '_country', $userdata['country'], TRUE );
-
-			if( process_email_user_registration( $userdata ) == FALSE ):
-				$response['message'] = __( 'Error trying to email you.', 'jmembers' );
-			endif;
-
-			$user = wp_signon( array(
-					'user_login'    => $userdata['user_login'],
-					'user_password' => $userdata['user_pass'],
-					'remember'      => false
-				) , true );
-
-			$response['url'] = $jmembers_settings['page_transactions'].'?package='.$response['package_id'].'&processor='.$response['payment_processor'];
+		// Verify selected package
+		if( !isset( $_POST['package_id'] ) ):
+			$response['user_id'] = 0;
+			$response['message'] = __( 'You didn\'t select any package.', 'jmembers' );
 			
 			die( json_encode( $response ) );
 		endif;
 
-		die( __( 'Error passing security check.', 'jmembers' ) );
+		// Add Package to response array
+		$response['package_id'] = (int) $_POST['package_id'];
+
+		// Get package
+		$package = get_package( $_POST['package_id'] );
+
+		if( $package == NULL ):
+			$response['user_id'] = 0;
+			$response['message'] = __( 'You selected an invalid package.', 'jmembers' );
+			
+			die( json_encode( $response ) );
+		endif;
+
+		$package_display = unserialize( $package->display );
+
+		if( $package_display['display_registration'] == 0 ):
+			$response['user_id'] = 0;
+			$response['message'] = __( 'You can\'t purchase this package.', 'jmembers' );
+			
+			die( json_encode( $response ) );
+		endif;
+		// End: Verify selected package
+
+		$user_id = wp_insert_user( $userdata );
+
+		if( is_wp_error($user_id) ):
+			$response['user_id'] = 0;
+			$response['message'] = $user_id->get_error_message();
+
+			die( json_encode( $response ) );
+		endif;
+
+		// Add User ID to response array
+		$response['user_id'] = $user_id;
+
+		add_user_meta( $user_id, '_address', $userdata['address'], TRUE );
+		add_user_meta( $user_id, '_city', $userdata['city'], TRUE );
+		add_user_meta( $user_id, '_state', $userdata['state'], TRUE );
+		add_user_meta( $user_id, '_zip', $userdata['zip'], TRUE );
+		add_user_meta( $user_id, '_country', $userdata['country'], TRUE );
+
+		if( process_email_user_registration( $userdata ) == FALSE ):
+			$response['message'] = __( 'Error trying to email you.', 'jmembers' );
+		endif;
+
+		$user = wp_signon( array(
+				'user_login'    => $userdata['user_login'],
+				'user_password' => $userdata['user_pass'],
+				'remember'      => false
+			) , true );
+
+		$response['url'] = $jmembers_settings['page_transactions'].'?package='.$response['package_id'].'&action=new&processor='.$response['payment_processor'];
+		
+		die( json_encode( $response ) );
 	}
 
 	public function transaction(){
-		if( !empty($_POST) && wp_verify_nonce( $_POST['jmembers_nonce'], 'transactions' ) ):
-			$data = array(
-				'user_id'        => intval( $_POST['user_id'] ),
-				'package_id'     => intval( $_POST['package_id'] ),
-				'post_id'        => intval( $_POST['post_id'] ),
-				'creditcardtype' => sanitize_text_field( $_POST['creditcardtype'] ),
-				'acct'           => $_POST['acct'],
-				'expdate'        => $_POST['expdate'],
-				'user_email'     => sanitize_email( $_POST['user_email'] ),
-				'first_name'     => sanitize_text_field( $_POST['first_name'] ),
-				'last_name'      => sanitize_text_field( $_POST['last_name'] ),
-				'address'        => sanitize_text_field( $_POST['address'] ),
-				'city'           => sanitize_text_field( $_POST['city'] ),
-				'state'          => sanitize_text_field( $_POST['state'] ),
-				'zip'            => sanitize_text_field( $_POST['zip'] ),
-				'country'        => sanitize_text_field( $_POST['country'] )
-			);
+		if( empty( $_POST ) || !wp_verify_nonce( $_POST['jmembers_nonce'], 'transaction' ) ):
+			die( __( 'Error passing security check.', 'jmembers' ) );
+		endif;
 
-			$response = array();
-			$response['data'] = $data;
 
-			if( has_profile_id() ):
-				if( !is_user_expire() ):
+		$data = array(
+			'user_id'        => intval( $_POST['user_id'] ),
+			'package_id'     => intval( $_POST['package_id'] ),
+			'post_id'        => intval( $_POST['post_id'] ),
+			'creditcardtype' => sanitize_text_field( $_POST['creditcardtype'] ),
+			'acct'           => $_POST['acct'],
+			'cvv2'           => $_POST['cvv2'],
+			'expdate'        => $_POST['expdate'],
+			'user_email'     => sanitize_email( $_POST['user_email'] ),
+			'first_name'     => sanitize_text_field( $_POST['first_name'] ),
+			'last_name'      => sanitize_text_field( $_POST['last_name'] ),
+			'address'        => sanitize_text_field( $_POST['address'] ),
+			'city'           => sanitize_text_field( $_POST['city'] ),
+			'state'          => sanitize_text_field( $_POST['state'] ),
+			'zip'            => sanitize_text_field( $_POST['zip'] ),
+			'country'        => sanitize_text_field( $_POST['country'] )
+		);
+
+		$response = array();
+		$response['data'] = $data;
+
+		if( !has_profile_id() ):
+
+			if( $data['package_id'] != 0 ): // Is a package
+				$package = get_package( $data['package_id'] );
+
+				// Validate package
+				if( $package == NULL ):
 					$response['success'] = 0;
-					$response['message'] = __( 'You have an active package. Why are you here?', 'jmembers' );
+					$response['message'] = __( 'Are you trying to buy an invalid package?' , 'jmembers' );
 
 					die( json_encode( $response ) );
 				endif;
 
-				if( $data['package_id'] != 0 ): // Is a package
-					$package = get_package( $data['package_id'] );
+				if( is_package_recurring( $package->ID ) ):
+					$profile                   = new PayPalPro_CreateProfile();
+					$profile->creditcardtype   = $data['creditcardtype'];
+					$profile->acct             = $data['acct'];
+					$profile->expdate          = $data['expdate'];
+					$profile->cvv2             = $data['cvv2'];
+					// Billing Information
+					$profile->firstname        = $data['first_name'];
+					$profile->lastname         = $data['last_name'];
+					$profile->address          = $data['address'];
+					$profile->city             = $data['city'];
+					$profile->state            = $data['state'];
+					$profile->country          = $data['country'];
+					$profile->zip              = $data['zip'];
+					// Package information
 
-					// Validate package
-					if( $package == NULL ):
+					$profile->amt              = $package->price;
+					$profile->currencycode     = 'USD';
+					$profile->desc             = get_package_name( $package->ID );
+					$profile->billingperiod    = get_package_period( $package->ID );
+					$profile->billingfrequency = $package->duration;
+					$profile->profilestartdate = date( 'Y-m-d', strtotime(current_time( 'mysql' )) ).'T00:00:00Z';
+
+					$paypalpro = new JM_Payment_PayPalPro();
+					$paypalpro_result = $paypalpro->process( 'CreateRecurringPaymentsProfile', $profile->toString() ); 
+					
+					if( !$paypalpro_result ):
 						$response['success'] = 0;
-						$response['message'] = __( 'Are you trying to buy an invalid package?' , 'jmembers' );
+						$response['message'] = __( 'An error ocurred trying to process your credit card, please go back and a try again.', 'jmembers' );
 
 						die( json_encode( $response ) );
 					endif;
 
-					if( is_package_recurring( $package->ID ) ):
-						$profile                   = new PayPalPro_CreateProfile();
-						$profile->creditcardtype   = $data['creditcardtype'];
-						$profile->acct             = $data['acct'];
-						$profile->expdate          = $data['expdate'];
-						$profile->cvv2             = $data['cvv2'];
-						// Billing Information
-						$profile->firstname        = $data['first_name'];
-						$profile->lastname         = $data['last_name'];
-						$profile->address          = $data['address'];
-						$profile->city             = $data['city'];
-						$profile->state            = $data['state'];
-						$profile->country          = $data['country'];
-						$profile->zip              = $data['zip'];
-						// Package information
+					$transaction = new JMembers_Transaction();
+					$transaction->user_id = $data['user_id'];
+					$transaction->package_id = $data['package_id'];
+					$transaction->datetime = current_time( 'mysql' );
+					$transaction->date = serialize( $paypalpro_result );
 
-						$profile->amt              = $package->price;
-						$profile->currencycode     = 'USD';
-						$profile->desc             = get_package_name( $package->ID );
-						$profile->billingperiod    = get_package_period( $package->ID );
-						$profile->billingfrequency = $package->duration;
-						$profile->profilestartdate = date( 'Y-m-d', current_time( 'mysql' ) ).'T00:00:00Z';
+					$member = new JMembers_Member();
+					$member->user_id = $data['user_id'];
+					$member->package_id = $data['package_id'];
+					$member->status = 'Active';
+					$member->datetime_packjoin = current_time( 'mysql' );
+					$member->datetime_expire = process_user_next_expiration( $package_id );
+					$member->payment = serialize( $paypalpro_result );
+					$member->save();
 
-						$paypalpro = new JM_Payment_PayPalPro();
-						$paypalpro_result = $paypalpro->process( 'CreateRecurringPaymentsProfile', $profile->toString() ); 
-						
-						if( !$paypalpro_result ):
-							$response['success'] = 0;
-							$response['message'] = __( 'An error ocurred trying to process your credit card, please go back and a try again.', 'jmembers' );
+					$response['success'] = 1;
+					$response['message'] = __( 'Payment process successfuly.', 'jmembers' );
 
-							die( json_encode( $response ) );
-						endif;
-
-						$transaction = new JMembers_Transaction();
-						$transaction->user_id = $data['user_id'];
-						$transaction->package_id = $data['package_id'];
-						$transaction->datetime = current_time( 'mysql' );
-						$transaction->date = serialize( $paypalpro_result );
-
-						$member = new JMembers_Member();
-						$member->user_id = $data['user_id'];
-						$member->package_id = $data['package_id'];
-						$member->status = 'Active';
-						$member->datetime_packjoin = current_time( 'mysql' );
-						$member->datetime_expire = ;
-						$member->payment = serialize( $paypalpro_result );
-
-
-
-						$response['success'] = 1;
-						$response['message'] = __( 'Payment process successfuly.', 'jmembers' );
-
-					endif;
-
-
-
-				elseif( $data['post_id'] != 0 ): // Is a post
-					$post = get_post( $data['post_id'] );
-
-					// Validate post
-					if( $post == NULL ):
-						$response['success'] = 0;
-						$response['message'] = __( 'Are you trying to buy an invalid post?' , 'jmembers' );						
-
-						die( json_encode( $response ) );
-					endif;
-
-
-
+					die( json_encode($response) );
 				endif;
-			endif;
-		endif;
 
-		die( __( 'Error passing security check.', 'jmembers' ) );
+			elseif( $data['post_id'] != 0 ): // is a post
+				$post = get_post( $data['post_id'] );
+
+				// Validate post
+				if( $post == NULL ):
+					$response['success'] = 0;
+					$response['message'] = __( 'Are you trying to buy an invalid post?' , 'jmembers' );						
+
+					die( json_encode( $response ) );
+				endif;
+
+				// Process Payment
+			endif; // END - is a post
+		endif;
 	}
 }
 new JM_Ajax();

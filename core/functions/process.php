@@ -32,8 +32,23 @@ function process_email_user_registration( $userdata ){
 function process_user_next_expiration( $package_id ){
 	$package = get_package( $package_id );
 
+	$current_time = strtotime(current_time( 'mysql' ));
+
 	switch( $package->duration_type ){
-		
+		case 1:
+			$output = strtotime( "+1 year", $current_time );
+			break;
+		case 2:
+			$output = strtotime( "+1 month", $current_time );
+			break;
+		case 3:
+			$output = strtotime( "+1 week", $current_time );
+			break;
+		case 4:
+			$output = strtotime( "+1 day", $current_time );
+			break;
 	}
+
+	return $output;
 }
 ?>

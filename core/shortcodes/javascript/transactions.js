@@ -52,10 +52,11 @@ jQuery(document).ready(function($){
 	});
 
 	$('form#transaction').submit(function(){
+		/*
 		$('input').each( function(){ $(this).prop( 'disabled', true ) } );
 		$('select').each( function(){ $(this).prop( 'disabled', true ) } );
 		$('textarea').each( function(){ $(this).prop( 'disabled', true ) } );
-
+		*/
 		var userform = function(){
 			if( $('input#use_userdata_0').prop('cheked') == true ){
 				return $('div#use_userdata');
@@ -80,6 +81,7 @@ jQuery(document).ready(function($){
 			post_id: $('#post').val(),
 			creditcardtype: $('#creditcardtype').find(':selected').val(),
 			acct: $('#acct').val(),
+			cvv2: $('#cvv2').val(),
 			expdate: $('#expdate_month').find(':selected').val()+$('#expdate_year').find(':selected').val(),
 			user_email: $(userform).find('#user_email').val(),
 			first_name: $(userform).find('#first_name').val(),
