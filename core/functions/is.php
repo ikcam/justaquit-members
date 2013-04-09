@@ -11,7 +11,7 @@ function is_administrator(){
 	return FALSE;
 }
 
-function is_user_expired( $user_id = null ){
+function is_user_expire( $user_id = null ){
 	if( $user_id == null )
 		$user_id = get_current_user_id();
 
@@ -62,6 +62,15 @@ function is_package_available_extend( $package_id ){
 	$package_display = unserialize($package->display);
 
 	if( $package_display['display_extend'] == 1 )
+		return TRUE;
+
+	return FALSE;
+}
+
+function is_package_recurring( $package_id ){
+	$package = get_package( $package_id );
+
+	if( $package->billing == 0 )
 		return TRUE;
 
 	return FALSE;

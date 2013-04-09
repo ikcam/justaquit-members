@@ -97,8 +97,39 @@ function get_package_name( $ID ){
 	return $output;
 }
 
-function get_payment_processor( $processor ){
-	echo $processor;
+function get_package_period( $ID ){
+	$package = get_package( $ID );
+
+	if( $package == NULL )
+		return FALSE;
+
+	switch( $package->duration_type ){
+		case 1:
+			$output = 'Year';
+			break;
+		case 2:
+			$output = 'Month';
+			break;
+		case 3:
+			$output = 'Week';
+			break;
+		case 4:
+			$output = 'Day';
+			break;
+	}
+
+	return $output;
+}
+
+function get_payment_form( $processor, $data ){
+	if( $processor == 'pppro' && class_exists('JM_Payment_PayPalPro') )
+		return JM_Payment_PayPalPro::form( $data );
+
+	if( $processor == 'ppstandard' && class_exists('JM_Payment_PayPalStandard') )
+		return JM_Payment_PayPalStandard::form( $data );
+
+	if( $processor == '1sc' && class_exists('JM_Payment_ShoppingCart') )
+		return JM_Payment_ShoppingCart::form( $data );
 }
 
 function get_countries(){

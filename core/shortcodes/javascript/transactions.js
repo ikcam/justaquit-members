@@ -77,6 +77,7 @@ jQuery(document).ready(function($){
 			jmembers_nonce: $('#jmembers_nonce').val(),
 			user_id: $('#user').val(),
 			package_id: $('#package').val(),
+			post_id: $('#post').val(),
 			creditcardtype: $('#creditcardtype').find(':selected').val(),
 			acct: $('#acct').val(),
 			expdate: $('#expdate_month').find(':selected').val()+$('#expdate_year').find(':selected').val(),

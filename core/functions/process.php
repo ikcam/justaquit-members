@@ -28,4 +28,12 @@ function process_email_user_registration( $userdata ){
 
 	return wp_mail( $userdata['user_email'], $subject, $message );
 }
+
+function process_user_next_expiration( $package_id ){
+	$package = get_package( $package_id );
+
+	switch( $package->duration_type ){
+		
+	}
+}
 ?>

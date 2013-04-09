@@ -204,6 +204,7 @@ Class JM_Ajax{
 			$data = array(
 				'user_id'        => intval( $_POST['user_id'] ),
 				'package_id'     => intval( $_POST['package_id'] ),
+				'post_id'        => intval( $_POST['post_id'] ),
 				'creditcardtype' => sanitize_text_field( $_POST['creditcardtype'] ),
 				'acct'           => $_POST['acct'],
 				'expdate'        => $_POST['expdate'],
@@ -217,8 +218,98 @@ Class JM_Ajax{
 				'country'        => sanitize_text_field( $_POST['country'] )
 			);
 
-			if( has_profile_id() && is_user_expired() ):
+			$response = array();
+			$response['data'] = $data;
 
+			if( has_profile_id() ):
+				if( !is_user_expire() ):
+					$response['success'] = 0;
+					$response['message'] = __( 'You have an active package. Why are you here?', 'jmembers' );
+
+					die( json_encode( $response ) );
+				endif;
+
+				if( $data['package_id'] != 0 ): // Is a package
+					$package = get_package( $data['package_id'] );
+
+					// Validate package
+					if( $package == NULL ):
+						$response['success'] = 0;
+						$response['message'] = __( 'Are you trying to buy an invalid package?' , 'jmembers' );
+
+						die( json_encode( $response ) );
+					endif;
+
+					if( is_package_recurring( $package->ID ) ):
+						$profile                   = new PayPalPro_CreateProfile();
+						$profile->creditcardtype   = $data['creditcardtype'];
+						$profile->acct             = $data['acct'];
+						$profile->expdate          = $data['expdate'];
+						$profile->cvv2             = $data['cvv2'];
+						// Billing Information
+						$profile->firstname        = $data['first_name'];
+						$profile->lastname         = $data['last_name'];
+						$profile->address          = $data['address'];
+						$profile->city             = $data['city'];
+						$profile->state            = $data['state'];
+						$profile->country          = $data['country'];
+						$profile->zip              = $data['zip'];
+						// Package information
+
+						$profile->amt              = $package->price;
+						$profile->currencycode     = 'USD';
+						$profile->desc             = get_package_name( $package->ID );
+						$profile->billingperiod    = get_package_period( $package->ID );
+						$profile->billingfrequency = $package->duration;
+						$profile->profilestartdate = date( 'Y-m-d', current_time( 'mysql' ) ).'T00:00:00Z';
+
+						$paypalpro = new JM_Payment_PayPalPro();
+						$paypalpro_result = $paypalpro->process( 'CreateRecurringPaymentsProfile', $profile->toString() ); 
+						
+						if( !$paypalpro_result ):
+							$response['success'] = 0;
+							$response['message'] = __( 'An error ocurred trying to process your credit card, please go back and a try again.', 'jmembers' );
+
+							die( json_encode( $response ) );
+						endif;
+
+						$transaction = new JMembers_Transaction();
+						$transaction->user_id = $data['user_id'];
+						$transaction->package_id = $data['package_id'];
+						$transaction->datetime = current_time( 'mysql' );
+						$transaction->date = serialize( $paypalpro_result );
+
+						$member = new JMembers_Member();
+						$member->user_id = $data['user_id'];
+						$member->package_id = $data['package_id'];
+						$member->status = 'Active';
+						$member->datetime_packjoin = current_time( 'mysql' );
+						$member->datetime_expire = ;
+						$member->payment = serialize( $paypalpro_result );
+
+
+
+						$response['success'] = 1;
+						$response['message'] = __( 'Payment process successfuly.', 'jmembers' );
+
+					endif;
+
+
+
+				elseif( $data['post_id'] != 0 ): // Is a post
+					$post = get_post( $data['post_id'] );
+
+					// Validate post
+					if( $post == NULL ):
+						$response['success'] = 0;
+						$response['message'] = __( 'Are you trying to buy an invalid post?' , 'jmembers' );						
+
+						die( json_encode( $response ) );
+					endif;
+
+
+
+				endif;
 			endif;
 		endif;
 
