@@ -160,7 +160,7 @@ endforeach;
 	if( $jmembers_settings['payment_pppro_active'] == 1 && $jmembers_settings['payment_pppro_memberships'] == 1 ):
 ?>
 	<p class="processor_row">
-		<input type="radio" name="payment_processor" value="processor_pppro" id="processor_pppro" />
+		<input type="radio" name="payment_processor" value="pppro" id="processor_pppro" />
 		<label for="processor_pppro"><?php echo $jmembers_settings['payment_pppro_name'] ?></label>
 	</p>
 <?php
@@ -170,7 +170,7 @@ endforeach;
 	if( $jmembers_settings['payment_ppstandard_active'] == 1 && $jmembers_settings['payment_ppstandard_memberships'] == 1 ):
 ?>
 	<p class="processor_row">
-		<input type="radio" name="payment_processor" value="processor_ppstandard" id="processor_ppstandard" />
+		<input type="radio" name="payment_processor" value="ppstandard" id="processor_ppstandard" />
 		<label for="processor_ppstandard"><?php echo $jmembers_settings['payment_ppstandard_name'] ?></label>
 	</p>
 <?php
@@ -180,7 +180,7 @@ endforeach;
 	if( $jmembers_settings['payment_1sc_active'] == 1 && $jmembers_settings['payment_1sc_memberships'] == 1 ):
 ?>
 	<p class="processor_row">
-		<input type="radio" name="payment_processor" value="processor_1sc" id="processor_1sc" />
+		<input type="radio" name="payment_processor" value="1sc" id="processor_1sc" />
 		<label for="processor_1sc"><?php echo $jmembers_settings['payment_1sc_name'] ?></label>
 	</p>
 <?php

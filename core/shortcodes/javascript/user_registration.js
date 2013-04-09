@@ -130,11 +130,32 @@ jQuery(document).ready(function($){
 	}
 
 	function check_package(){
-		return $('input[name=package_id]').filter(':checked').prop('checked').is(true);
+		if( $('input[name=package_id]').filter(':checked').prop('checked') == true ){
+			$('.package_row').css('background', '#FFF');
+			$('.package_row').css('background', '#FFF');
+
+			return true;			
+		} else {
+			$('.package_row').css('background', '#e9a394');
+			$('.package_row').css('background', '#e9a394');
+
+			return false;
+		}
+
 	}
 
 	function check_processor(){
-		return $('input[name=payment_processor]').filter(':checked').prop('checked').is(true);
+		if( $('input[name=payment_processor]').filter(':checked').prop('checked') == true ){
+			$('.processor_row').css('background', '#FFF');
+			$('.processor_row').css('background', '#FFF');
+
+			return true;
+		} else {
+			$('.processor_row').css('background', '#e9a394');
+			$('.processor_row').css('background', '#e9a394');
+
+			return false;
+		}
 	}
 
 	function check_terms(){
