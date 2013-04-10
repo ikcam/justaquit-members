@@ -286,6 +286,8 @@ Class JM_Ajax{
 					$member->payment = serialize( $paypalpro_result );
 					$member->save();
 
+					process_email_transaction( $data );
+
 					$response['success'] = 1;
 					$response['message'] = __( 'Payment process successfuly.', 'jmembers' );
 

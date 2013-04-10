@@ -118,6 +118,7 @@ Class JMembers_Page_Settings{
 			<div id="tab-email">
 				<table class="form-table">
 				<tbody>
+					<!-- Email User Registration -->
 					<tr valign="top">
 						<th scope="row"><label for="email_user_registration_subject"><?php _e( 'Subject new user email:' ) ?></label></th>
 						<td>
@@ -130,6 +131,34 @@ Class JMembers_Page_Settings{
 							<?php wp_editor($settings['email_user_registration'], 'email_user_registration', array( 'textarea_name' => 'jmembers_settings[email_user_registration]', 'teeny' => true ) 	); ?>
 						</td>
 					</tr>
+					<tr valign="top">
+						<th scope="row">
+						</th>
+						<td>
+							<span class="description"><strong>Available tags:</strong> {user_login}, {user_email}, {user_pass}, {first_name}, {last_name}, {address}, {city}, {state}, {zip}, {country}</span>
+						</td>
+					</tr>
+					<!-- Email Transaction -->
+					<tr valign="top">
+						<th scope="row"><label for="email_transaction_subject"><?php _e( 'Subject transaction email:' ) ?></label></th>
+						<td>
+							<input class="regular-text" type="text" name="jmembers_settings[email_transaction_subject]" id="email_transaction_subject" value="<?php echo $settings['email_transaction_subject'] ?>" />
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><label for="email_transaction"><?php _e( 'Transaction email:' ) ?></label></th>
+						<td>
+							<?php wp_editor($settings['email_transaction'], 'email_transaction', array( 'textarea_name' => 'jmembers_settings[email_transaction]', 'teeny' => true ) 	); ?>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row">
+						</th>
+						<td>
+							<span class="description"><strong>Available tags:</strong> {product_name}, {user_email}, {first_name}, {last_name}, {address}, {city}, {state}, {zip}, {country}</span>
+						</td>
+					</tr>
+
 				</tbody>
 				</table>
 			</div>
