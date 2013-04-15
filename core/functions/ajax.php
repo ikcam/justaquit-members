@@ -6,6 +6,7 @@ Class JM_Ajax{
 		add_action( 'wp_ajax_nopriv_jmembers_check_pass', array( &$this, 'check_pass' ) );
 		add_action( 'wp_ajax_nopriv_jmembers_user_registration', array( &$this, 'user_registration' ) );
 		add_action( 'wp_ajax_jmembers_transaction', array( &$this, 'transaction' ) );
+		add_action( 'wp_ajax_jmembers_member_update', array( &$this, 'member_update' ) );
 	}
 
 	public function check_user(){
@@ -270,20 +271,26 @@ Class JM_Ajax{
 						die( json_encode( $response ) );
 					endif;
 
-					$transaction = new JMembers_Transaction();
-					$transaction->user_id = $data['user_id'];
+					$transaction             = new JMembers_Transaction();
+					$transaction->user_id    = $data['user_id'];
 					$transaction->package_id = $data['package_id'];
-					$transaction->datetime = strtotime( current_time( 'mysql' ) );
-					$transaction->date = serialize( $paypalpro_result );
+					$transaction->datetime   = strtotime( current_time( 'mysql' ) );
+					$transaction->date       = serialize( $paypalpro_result );
 					$transaction->add();
 
-					$member = new JMembers_Member();
-					$member->user_id = $data['user_id'];
-					$member->package_id = $data['package_id'];
-					$member->status = 'Active';
-					$member->datetime_packjoin = current_time( 'mysql' );
-					$member->datetime_expire = process_user_next_expiration( $package_id );
-					$member->payment = serialize( $paypalpro_result );
+					$payment = array(
+						'processor' => 'pppro',
+						'profile_id' => $paypalpro_result['PROFILEID'],
+						'profile_status' => $paypalpro_result['PROFILESTATUS']
+					);
+
+					$member                    = new JMembers_Member();
+					$member->user_id           = $data['user_id'];
+					$member->package_id        = $data['package_id'];
+					$member->status            = 'Active';
+					$member->datetime_packjoin = strtotime(current_time( 'mysql' ));
+					$member->datetime_expire   = process_user_next_expiration( $package_id );
+					$member->payment           = serialize( $payment );
 					$member->save();
 
 					process_email_transaction( $data );
@@ -308,6 +315,54 @@ Class JM_Ajax{
 				// Process Payment
 			endif; // END - is a post
 		endif;
+	}
+
+	public function member_update(){
+		if( empty( $_POST ) || !wp_verify_nonce( $_POST['jmembers_nonce'], 'member_update' ) ):
+			die( __( 'Error passing security check.', 'jmembers' ) );
+		endif;
+
+		$response = array();
+
+		$datetime_packjoin = date_parse_from_format('j/n/Y', $_POST['datetime_packjoin']);
+		$datetime_packjoin = mktime(0, 0, 0, $datetime_packjoin['month'], $datetime_packjoin['day'], $datetime_packjoin['year']);
+		$datetime_expire = date_parse_from_format('j/n/Y', $_POST['datetime_expire']);
+		$datetime_expire = mktime(0, 0, 0, $datetime_expire['month'], $datetime_expire['day'], $datetime_expire['year']);
+
+		$payment = array(
+			'processor'      => sanitize_text_field( $_POST['payment_processor'] ),
+			'profile_id'     => $_POST['payment_profile_id'],
+			'profile_status' => $_POST['payment_profile_status']
+		);
+		$payment = serialize($payment);
+
+		$data = array(
+			'_user'              => intval( $_POST['user'] ),
+			'_status'            => sanitize_text_field($_POST['status']),
+			'_package'           => intval($_POST['package_id']),
+			'_datetime_packjoin' => $datetime_packjoin,
+			'_datetime_expire'   => $datetime_expire,
+			'_payment'           => $payment
+		);
+		$response['data'] = $data;
+
+		if( !get_user_by( 'id', $data['_user'] ) ):
+			$response['success'] = 0;
+			$response['message'] = __( 'Invalid user.', 'jmembers' );
+
+			die( json_encode($response) );
+		endif;
+
+		foreach( $data as $key => $value ):
+			if( $key != '_user' ):
+				update_user_meta( $data['_user'], '_'.$key, $value );
+			endif;
+		endforeach;
+
+		$response['success'] = 1;
+		$response['message'] = __('User updated successfuly', 'jmembers');
+
+		die( json_encode($response) );
 	}
 }
 new JM_Ajax();
