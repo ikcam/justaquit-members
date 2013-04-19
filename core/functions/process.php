@@ -75,31 +75,31 @@ function process_email_transaction( $data ){
 function process_user_next_expiration( $package_id ){
 	$package = get_package( $package_id );
 
-	$current_time = strtotime(current_time( 'mysql' ));
+	$time = strtotime(current_time( 'mysql' ));
 
 	switch( $package->duration_type ){
 		case 1:
 			for( $i = 1; $i <= $package->duration; $i++ ){
-				$output = strtotime( "+1 year", $current_time );
+				$time = strtotime( "+1 year", $time );
 			}
 			break;
 		case 2:
 			for( $i = 1; $i <= $package->duration; $i++ ){
-				$output = strtotime( "+1 month", $current_time );
+				$time = strtotime( "+1 month", $time );
 			}
 			break;
 		case 3:
 			for( $i = 1; $i <= $package->duration; $i++ ){
-				$output = strtotime( "+1 week", $current_time );
+				$time = strtotime( "+1 week", $time );
 			}
 			break;
 		case 4:
 			for( $i = 1; $i <= $package->duration; $i++ ){
-				$output = strtotime( "+1 day", $current_time );
+				$time = strtotime( "+1 day", $time );
 			}
 			break;
 	}
 
-	return $output;
+	return $time;
 }
 ?>
