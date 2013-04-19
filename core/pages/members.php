@@ -53,7 +53,7 @@ endif;
 $packages = get_packages();
 
 foreach($users as $user):
-	$user_package = get_user_meta( $user->ID, '_package', true );
+	$user_package = get_user_meta( $user->ID, '_package_id', true );
 	$user_status  = get_user_meta( $user->ID, '_status', true );
 	$user_join    = get_user_meta( $user->ID, '_datetime_packjoin', true );
 	$user_expire  = get_user_meta( $user->ID, '_datetime_expire', true );
@@ -80,7 +80,7 @@ foreach($users as $user):
 					<tr valign="top">
 						<th scope="row"><label for="package-<?php echo $user->ID ?>"><?php _e('Package', 'jmembers') ?></label></th>
 						<td>
-							<select name="package" id="package-<?php echo $user->ID ?>">
+							<select name="_package_id" id="package-<?php echo $user->ID ?>">
 								<option value="0"><?php echo 'None' ?></option>
 <?php foreach( $packages as $package ): ?>
 								<option value="<?php echo $package->ID ?>" <?php if( $package->ID == $user_package ) echo 'selected'; ?>>
