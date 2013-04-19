@@ -21,6 +21,7 @@ require( JMEMBERS_PATH . 'core/pages/main.php' );
 require( JMEMBERS_PATH . 'core/pages/memberships.php' );
 require( JMEMBERS_PATH . 'core/pages/members.php' );
 require( JMEMBERS_PATH . 'core/pages/packages.php' );
+require( JMEMBERS_PATH . 'core/pages/reports.php' );
 require( JMEMBERS_PATH . 'core/pages/settings.php' );
 require( JMEMBERS_PATH . 'core/shortcodes/user_registration.php' );
 require( JMEMBERS_PATH . 'core/shortcodes/transactions.php' );
