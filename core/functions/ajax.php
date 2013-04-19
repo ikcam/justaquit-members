@@ -355,7 +355,7 @@ Class JM_Ajax{
 
 		foreach( $data as $key => $value ):
 			if( $key != '_user' ):
-				update_user_meta( $data['_user'], '_'.$key, $value );
+				update_user_meta( $data['_user'], $key, $value );
 			endif;
 		endforeach;
 
