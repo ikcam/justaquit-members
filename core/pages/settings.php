@@ -81,6 +81,20 @@ Class JMembers_Page_Settings{
 						</td>
 					</tr>
 					<tr valign="top">
+						<th scope="row"><label for="page_transactions_sucesss"><?php _e( 'Successful transaction page', 'jmembers' ) ?></label></th>
+						<td>
+							<input class="regular-text" type="text" name="jmembers_settings[page_transactions_sucesss]" id="page_transactions_sucesss" value="<?php echo $settings['page_transactions_sucesss'] ?>" />
+							<span class="description"><?php _e( 'URL for the  Sucessful transaction page' , 'jmembers' ) ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
+						<th scope="row"><label for="page_transactions_failure"><?php _e( 'Failure transaction page', 'jmembers' ) ?></label></th>
+						<td>
+							<input class="regular-text" type="text" name="jmembers_settings[page_transactions_failure]" id="page_transactions_failure" value="<?php echo $settings['page_transactions_failure'] ?>" />
+							<span class="description"><?php _e( 'URL for the Failure transaction page' , 'jmembers' ) ?></span>
+						</td>
+					</tr>
+					<tr valign="top">
 						<th scope="row"><label for="page_terms"><?php _e( 'Terms and Conditions page', 'jmembers' ) ?></label></th>
 						<td>
 							<input class="regular-text" type="text" name="jmembers_settings[page_terms]" id="page_terms" value="<?php echo $settings['page_terms'] ?>" />

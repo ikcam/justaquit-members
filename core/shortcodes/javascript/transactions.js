@@ -52,11 +52,10 @@ jQuery(document).ready(function($){
 	});
 
 	$('form#transaction').submit(function(){
-		/*
 		$('input').each( function(){ $(this).prop( 'disabled', true ) } );
 		$('select').each( function(){ $(this).prop( 'disabled', true ) } );
 		$('textarea').each( function(){ $(this).prop( 'disabled', true ) } );
-		*/
+
 		var userform = function(){
 			if( $('input#use_userdata_0').prop('cheked') == true ){
 				return $('div#use_userdata');
@@ -96,13 +95,7 @@ jQuery(document).ready(function($){
 		$.post( ajaxurl, data, function(response){
 			response = $.parseJSON(response);
 
-			console.log(response);
-
-			if( response['success'] = 0 ){
-				alert(response['message']);
-			} else {
-
-			}
+			$(location).attr( 'href', response['url'] );
 
 			return false;
 		});

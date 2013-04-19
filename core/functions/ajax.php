@@ -289,7 +289,7 @@ Class JM_Ajax{
 					$member->package_id        = $data['package_id'];
 					$member->status            = 'Active';
 					$member->datetime_packjoin = strtotime(current_time( 'mysql' ));
-					$member->datetime_expire   = process_user_next_expiration( $package_id );
+					$member->datetime_expire   = process_user_next_expiration( $data['package_id'] );
 					$member->payment           = serialize( $payment );
 					$member->save();
 
@@ -361,6 +361,13 @@ Class JM_Ajax{
 
 		$response['success'] = 1;
 		$response['message'] = __('User updated successfuly', 'jmembers');
+
+		if( $response['success'] == 1 )
+			$response['url'] = $jmembers_settings['page_transactions_success'];
+		else:
+			$response['url'] = $jmembers_settings['page_transactions_failure'];
+
+		$response['url'] = $jmembers_settings['page_transactions_sucess'];
 
 		die( json_encode($response) );
 	}
