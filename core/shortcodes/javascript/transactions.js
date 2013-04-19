@@ -52,9 +52,9 @@ jQuery(document).ready(function($){
 	});
 
 	$('form#transaction').submit(function(){
-		$('input').each( function(){ $(this).prop( 'disabled', true ) } );
-		$('select').each( function(){ $(this).prop( 'disabled', true ) } );
-		$('textarea').each( function(){ $(this).prop( 'disabled', true ) } );
+		$(this).find('input').each( function(){ $(this).prop( 'disabled', true ) } );
+		$(this).find('select').each( function(){ $(this).prop( 'disabled', true ) } );
+		$(this).find('textarea').each( function(){ $(this).prop( 'disabled', true ) } );
 
 		var userform = function(){
 			if( $('input#use_userdata_0').prop('cheked') == true ){
