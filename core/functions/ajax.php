@@ -364,10 +364,8 @@ Class JM_Ajax{
 
 		if( $response['success'] == 1 )
 			$response['url'] = $jmembers_settings['page_transactions_success'];
-		else:
+		else
 			$response['url'] = $jmembers_settings['page_transactions_failure'];
-
-		$response['url'] = $jmembers_settings['page_transactions_sucess'];
 
 		die( json_encode($response) );
 	}
