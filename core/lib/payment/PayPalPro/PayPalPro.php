@@ -83,7 +83,7 @@ Class JM_Payment_PayPalPro{
 	<input type="hidden" name="post" id="post" value="<?php echo $data['post_id'] ?>" />
 <?php endif; ?>
 	<input type="hidden" name="user" id="user" value="<?php echo $data['user_id'] ?>" />
-	<h3><?php _e( 'Credit Cart Information', 'jmembers' ) ?></h3>
+	<h3><?php _e( 'Credit Card Information', 'jmembers' ) ?></h3>
 	<table class="form-table">
 	<tbody>
 		<tr valign="top">
