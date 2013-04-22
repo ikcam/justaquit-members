@@ -29,7 +29,7 @@ jQuery(document).ready(function($){
 			jmembers_nonce: $(this).find('#jmembers_nonce').val(),
 			user: $(this).find('input[name="user"]').val(),
 			status: $(this).find('select[name="status"]').val(),
-			package_id: $(this).find('select[name="package"]').val(),
+			package_id: $(this).find('select[name="package_id"]').val(),
 			datetime_packjoin: $(this).find('input[name="date-join"]').val(),
 			datetime_expire: $(this).find('input[name="date-expire"]').val(),
 			payment_processor: $(this).find('select[name="payment-processor"]').val(),

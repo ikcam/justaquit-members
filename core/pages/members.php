@@ -80,7 +80,7 @@ foreach($users as $user):
 					<tr valign="top">
 						<th scope="row"><label for="package-<?php echo $user->ID ?>"><?php _e('Package', 'jmembers') ?></label></th>
 						<td>
-							<select name="_package_id" id="package-<?php echo $user->ID ?>">
+							<select name="package_id" id="package-<?php echo $user->ID ?>">
 								<option value="0"><?php echo 'None' ?></option>
 <?php foreach( $packages as $package ): ?>
 								<option value="<?php echo $package->ID ?>" <?php if( $package->ID == $user_package ) echo 'selected'; ?>>

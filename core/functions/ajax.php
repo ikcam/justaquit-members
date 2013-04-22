@@ -275,12 +275,12 @@ Class JM_Ajax{
 					$transaction->user_id    = $data['user_id'];
 					$transaction->package_id = $data['package_id'];
 					$transaction->datetime   = strtotime( current_time( 'mysql' ) );
-					$transaction->date       = serialize( $paypalpro_result );
+					$transaction->data       = serialize( $paypalpro_result );
 					$transaction->add();
 
 					$payment = array(
-						'processor' => 'pppro',
-						'profile_id' => $paypalpro_result['PROFILEID'],
+						'processor'      => 'pppro',
+						'profile_id'     => $paypalpro_result['PROFILEID'],
 						'profile_status' => $paypalpro_result['PROFILESTATUS']
 					);
 
@@ -288,7 +288,7 @@ Class JM_Ajax{
 					$member->user_id           = $data['user_id'];
 					$member->package_id        = $data['package_id'];
 					$member->status            = 'Active';
-					$member->datetime_packjoin = strtotime(current_time( 'mysql' ));
+					$member->datetime_packjoin = strtotime( current_time( 'mysql' ) );
 					$member->datetime_expire   = process_user_next_expiration( $data['package_id'] );
 					$member->payment           = serialize( $payment );
 					$member->save();
@@ -322,6 +322,7 @@ Class JM_Ajax{
 			die( __( 'Error passing security check.', 'jmembers' ) );
 		endif;
 
+		global $jmembers_settings;
 		$response = array();
 
 		$datetime_packjoin = date_parse_from_format('j/n/Y', $_POST['datetime_packjoin']);
@@ -339,7 +340,7 @@ Class JM_Ajax{
 		$data = array(
 			'_user'              => intval( $_POST['user'] ),
 			'_status'            => sanitize_text_field($_POST['status']),
-			'_package'           => intval($_POST['package_id']),
+			'_package_id'        => intval( $_POST['package_id'] ),
 			'_datetime_packjoin' => $datetime_packjoin,
 			'_datetime_expire'   => $datetime_expire,
 			'_payment'           => $payment

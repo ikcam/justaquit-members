@@ -80,7 +80,7 @@ Class JMembers_Page_Reports{
 				<td><?php echo $user->user_login ?></td>
 				<td><?php echo $user->display_name ?></td>
 				<td><?php echo $user->user_email ?></td>
-				<td><?php echo get_package_name( get_user_meta( $user->ID, '_package', TRUE ) ) ?></td>
+				<td><?php echo get_package_name( get_user_meta( $user->ID, '_package_id', TRUE ) ) ?></td>
 				<td><?php echo date( 'd/m/Y', get_user_meta( $user->ID, '_datetime_packjoin', true ) ) ?></td>
 				<td><?php echo date( 'd/m/Y', get_user_meta( $user->ID, '_datetime_expire', true ) ) ?></td>
 				<td></td>

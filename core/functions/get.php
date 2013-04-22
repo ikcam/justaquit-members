@@ -53,7 +53,10 @@ function get_package( $ID ){
 	return $wpdb->get_row( $wpdb->prepare( $query, $ID ) );
 }
 
-function get_package_name( $ID ){
+function get_package_name( $ID = null ){
+	if( $ID == null )
+		return __( 'N/A', 'jmembers' );
+
 	$package = get_package( $ID );
 	$membership = get_membership( $package->membership_id );
 

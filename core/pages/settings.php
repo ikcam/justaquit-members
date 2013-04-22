@@ -81,9 +81,9 @@ Class JMembers_Page_Settings{
 						</td>
 					</tr>
 					<tr valign="top">
-						<th scope="row"><label for="page_transactions_sucesss"><?php _e( 'Successful transaction page', 'jmembers' ) ?></label></th>
+						<th scope="row"><label for="page_transactions_success"><?php _e( 'Successful transaction page', 'jmembers' ) ?></label></th>
 						<td>
-							<input class="regular-text" type="text" name="jmembers_settings[page_transactions_sucesss]" id="page_transactions_sucesss" value="<?php echo $settings['page_transactions_sucesss'] ?>" />
+							<input class="regular-text" type="text" name="jmembers_settings[page_transactions_success]" id="page_transactions_success" value="<?php echo $settings['page_transactions_success'] ?>" />
 							<span class="description"><?php _e( 'URL for the  Sucessful transaction page' , 'jmembers' ) ?></span>
 						</td>
 					</tr>
